@@ -1,6 +1,7 @@
 package com.github.vantoozz.dikt
 
 import kotlin.reflect.KClass
+import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubtypeOf
@@ -39,10 +40,16 @@ class Container {
     private fun <T : Any> createViaNotEmptyCtor(klass: KClass<T>): T? {
         klass.starProjectedType
         klass.constructors.firstOrNull { ctor ->
-            ctor.parameters.none {
+            ctor.parameters.all {
                 get<T>(it.type) != null
             }
         }
+//            ?.let{ ctor->
+//            ctor.callBy()
+//            ctor.typeParameters.forEach {
+//                KParameter.
+//            }
+//        }
 
         return klass.takeIf {
             it.constructors.any { ctor ->
