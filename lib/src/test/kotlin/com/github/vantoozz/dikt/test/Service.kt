@@ -7,3 +7,7 @@ internal interface Service {
 internal class ServiceWithNoDependencies : Service {
     override fun makeString() = "Service with no dependencies"
 }
+
+internal class AnotherServiceWithNoDependencies : Service {
+    override fun makeString() = "Another service with no dependencies"
+}
