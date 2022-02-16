@@ -38,24 +38,17 @@ class Container {
         }?.createInstance()
 
     private fun <T : Any> createViaNotEmptyCtor(klass: KClass<T>): T? {
-        klass.starProjectedType
-        klass.constructors.firstOrNull { ctor ->
+
+        return klass.constructors.firstOrNull { ctor ->
             ctor.parameters.all {
                 get<T>(it.type) != null
             }
+        }?.let { ctor ->
+            ctor.callBy(ctor.parameters
+                .associateWith<KParameter, T?> {
+                    get(it.type)
+                })
         }
-//            ?.let{ ctor->
-//            ctor.callBy()
-//            ctor.typeParameters.forEach {
-//                KParameter.
-//            }
-//        }
-
-        return klass.takeIf {
-            it.constructors.any { ctor ->
-                ctor.parameters.isEmpty()
-            }
-        }?.createInstance()
     }
 
     @Suppress("UNCHECKED_CAST")

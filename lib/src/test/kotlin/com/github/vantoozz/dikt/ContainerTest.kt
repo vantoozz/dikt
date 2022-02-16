@@ -67,6 +67,9 @@ class ContainerTest {
 
         assertTrue(service is SomeTypeDependingOnService)
 
-        assertEquals("Some type with no dependencies", service.makeString())
+        assertEquals(
+            "Some type depending on service: Service with no dependencies",
+            service.makeString()
+        )
     }
 }
