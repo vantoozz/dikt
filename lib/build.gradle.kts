@@ -12,7 +12,6 @@ plugins {
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
-
     `maven-publish`
 }
 
@@ -43,18 +42,10 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("dikt") {
+            from(components["java"])
             groupId = "com.github.vantoozz"
             artifactId = "dikt"
-            version = "0.0.1"
-
-            versionMapping {
-                usage("java-api") {
-                    fromResolutionOf("runtimeClasspath")
-                }
-                usage("java-runtime") {
-                    fromResolutionResult()
-                }
-            }
+            version = "0.0.2"
         }
     }
 }
