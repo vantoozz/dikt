@@ -8,14 +8,21 @@
 
 plugins {
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.6.20"
 
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+
+    `maven-publish`
+}
+
+java {
+    withSourcesJar()
 }
 
 repositories {
     // Use Maven Central for resolving dependencies.
+    mavenLocal()
     mavenCentral()
 }
 
@@ -31,4 +38,23 @@ dependencies {
 
     // Use the Kotlin JUnit integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("dikt") {
+            groupId = "com.github.vantoozz"
+            artifactId = "dikt"
+            version = "0.0.1"
+
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
 }

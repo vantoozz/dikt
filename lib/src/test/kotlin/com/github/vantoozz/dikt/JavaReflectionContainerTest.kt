@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 internal class JavaReflectionContainerTest {
 
     @Test
-    fun itReturnsNull() {
+    fun `it returns null`() {
         val container = JavaReflectionContainer()
 
         val service = container.get(Service::class)
@@ -18,7 +18,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itReturnsPredefinedObjectOfType() {
+    fun `it returns predefined object of type`() {
         val container = JavaReflectionContainer()
 
         container.singleton(SomeTypeWithNoDependencies::class, SomeTypeWithNoDependencies())
@@ -31,7 +31,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itReturnsPredefinedObjectOfSubtype() {
+    fun `it returns predefined object of subtype`() {
         val container = JavaReflectionContainer()
 
         container.singleton(Service::class, ServiceWithNoDependencies())
@@ -44,7 +44,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itCreatesObjectOfType() {
+    fun `it creates object of type`() {
         val container = JavaReflectionContainer()
 
         val service = container.get(SomeTypeWithNoDependencies::class)
@@ -55,7 +55,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itCreatesObjectOfTypeWithDependency() {
+    fun `it creates object of type with dependency`() {
         val container = JavaReflectionContainer()
 
         container.singleton(Service::class, ServiceWithNoDependencies())
@@ -71,7 +71,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itCreatesObjectOfTypeWithCreatedDependency() {
+    fun `it creates object of type with created dependency`() {
         val container = JavaReflectionContainer()
 
         val service = container.get(SomeTypeDependingOnType::class)
@@ -85,7 +85,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itCreatesObjectWithProvider() {
+    fun `it creates object using provider`() {
         val container = JavaReflectionContainer()
 
         container.provider(Service::class) { ServiceWithNoDependencies() }
@@ -101,7 +101,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itKeepsProviderForTheSameType() {
+    fun `it keeps provider for the same type`() {
         val container = JavaReflectionContainer()
 
         container.singleton(Service::class, ServiceWithNoDependencies())
@@ -118,7 +118,7 @@ internal class JavaReflectionContainerTest {
     }
 
     @Test
-    fun itKeepsSingletonForTheSameType() {
+    fun `it keeps singleton for the same type`() {
         val container = JavaReflectionContainer()
 
         container.provider(Service::class) { ServiceWithNoDependencies() }
