@@ -1,19 +1,20 @@
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.20"
     `java-library`
     `maven-publish`
 }
 
-java {
-    withSourcesJar()
-
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+kotlin {
+    jvmToolchain {
+        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
+java {
+    withSourcesJar()
+}
+
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenLocal()
     mavenCentral()
 }

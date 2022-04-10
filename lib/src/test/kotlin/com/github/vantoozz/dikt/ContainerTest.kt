@@ -176,7 +176,6 @@ internal class ContainerTest {
         assertNull(service)
     }
 
-
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
     fun `it returns predefined object of subtype`(container: Container) {

@@ -78,7 +78,6 @@ class KotlinReflectionContainer : Container {
                 )
             }
 
-
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> provided(klass: KClass<T>) =
         providers[klass]?.let { provider ->

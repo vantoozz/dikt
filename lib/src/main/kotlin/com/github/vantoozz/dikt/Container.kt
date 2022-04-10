@@ -38,7 +38,7 @@ inline infix fun <reified T : Any> Container.put(noinline provider: () -> T) {
     set(T::class, provider)
 }
 
-internal val basicTypes =  setOf<KClass<*>>(
+internal val basicTypes = setOf<KClass<*>>(
     Number::class,
     Boolean::class,
     String::class,
