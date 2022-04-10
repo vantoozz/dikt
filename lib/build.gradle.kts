@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.6.20"
     `java-library`
@@ -8,6 +6,10 @@ plugins {
 
 java {
     withSourcesJar()
+
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
 repositories {
@@ -25,10 +27,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 publishing {
     publications {
         create<MavenPublication>("dikt") {
@@ -38,4 +36,22 @@ publishing {
             version = "0.0.2"
         }
     }
+}
+
+val testsJava8 = tasks.register<Test>("testsJava8") {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    })
+}
+
+val testsJava17 = tasks.register<Test>("testsJava17") {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    })
+}
+
+tasks.test {
+    useJUnitPlatform()
+    dependsOn(testsJava8)
+    dependsOn(testsJava17)
 }

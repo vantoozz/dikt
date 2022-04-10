@@ -44,7 +44,9 @@ class JavaReflectionContainer : Container {
                 it.constructors.any { ctor ->
                     ctor.parameters.isEmpty()
                 }
-            }?.newInstance()
+            }
+            ?.getDeclaredConstructor()
+            ?.newInstance()
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> createViaNotEmptyCtor(klass: Class<T>): T? =
