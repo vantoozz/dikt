@@ -32,7 +32,7 @@ publishing {
     publications {
         create<MavenPublication>("dikt") {
             from(components["java"])
-            groupId = "com.github.vantoozz"
+            groupId = "io.github.vantoozz"
             artifactId = "dikt"
             version = "0.0.2"
         }

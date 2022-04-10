@@ -1,4 +1,4 @@
-package com.github.vantoozz.dikt
+package io.github.vantoozz.dikt
 
 import kotlin.reflect.KClass
 

@@ -1,4 +1,4 @@
-package com.github.vantoozz.dikt.test
+package io.github.vantoozz.dikt.test
 
 internal class SomeTypeWithBooleanDependency(
     private val boolean: Boolean

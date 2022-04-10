@@ -1,4 +1,4 @@
-package com.github.vantoozz.dikt.test
+package io.github.vantoozz.dikt.test
 
 internal class SomeTypeWithDefaultValueOfDependency(
     private val dependency: SomeTypeWithStringDependency =

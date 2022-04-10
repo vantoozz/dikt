@@ -1,6 +1,6 @@
-package com.github.vantoozz.dikt
+package io.github.vantoozz.dikt
 
-import com.github.vantoozz.dikt.test.*
+import io.github.vantoozz.dikt.test.*
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
