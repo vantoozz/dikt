@@ -7,12 +7,15 @@ class JavaReflectionContainer : Container {
     private val implementations: MutableMap<Class<*>, Any> = mutableMapOf()
     private val providers: MutableMap<Class<*>, () -> Any> = mutableMapOf()
 
-    override fun <T : Any> singleton(klass: KClass<T>, implementation: T) {
-        implementations[klass.javaObjectType] = implementation
-        providers.remove(klass.javaObjectType)
+    private val basicJavaTypes: Set<Class<*>> =
+        basicTypes.map { basicType -> basicType.java }.toSet()
+
+    private fun saveImplementation(klass: Class<*>, implementation: Any) {
+        implementations[klass] = implementation
+        providers.remove(klass)
     }
 
-    override fun <T : Any> provider(klass: KClass<T>, provider: () -> T) {
+    override fun <T : Any> set(klass: KClass<T>, provider: () -> T) {
         providers[klass.javaObjectType] = provider
         implementations.remove(klass.javaObjectType)
     }
@@ -35,23 +38,29 @@ class JavaReflectionContainer : Container {
             }
 
     private fun <T : Any> createViaEmptyCtor(klass: Class<T>): T? =
-        klass.takeIf {
-            it.constructors.any { ctor ->
-                ctor.parameters.isEmpty()
-            }
-        }?.newInstance()
+        klass
+            .takeUnless { basicJavaTypes.contains(it) }
+            ?.takeIf {
+                it.constructors.any { ctor ->
+                    ctor.parameters.isEmpty()
+                }
+            }?.newInstance()
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> createViaNotEmptyCtor(klass: Class<T>): T? =
-        klass.constructors.firstOrNull { ctor ->
-            ctor.parameters.all {
-                get(it.type) != null
+        klass
+            .takeUnless { basicJavaTypes.contains(it) }
+            ?.constructors
+            ?.filter { it.parameters.isNotEmpty() }
+            ?.firstOrNull { ctor ->
+                ctor.parameters.all {
+                    get(it.type) != null
+                }
+            }?.let { ctor ->
+                ctor.newInstance(
+                    *(ctor.parameters.map { get(it.type) }).toTypedArray()
+                ) as T
             }
-        }?.let { ctor ->
-            ctor.newInstance(
-                *(ctor.parameters.map { get(it.type) }).toTypedArray()
-            ) as T
-        }
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> provided(klass: Class<T>) =
@@ -60,7 +69,7 @@ class JavaReflectionContainer : Container {
                 .takeIf { klass.isAssignableFrom(it.javaClass) }
                 ?.let { implementation ->
                     implementation as T
-                    singleton(klass.kotlin, implementation)
+                    saveImplementation(klass, implementation)
                     implementation
                 }
         }
