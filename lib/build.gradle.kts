@@ -12,6 +12,7 @@ kotlin {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 repositories {
@@ -34,7 +35,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.0.2"
+            version = "0.1.0"
         }
     }
 }
