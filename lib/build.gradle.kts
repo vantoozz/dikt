@@ -1,3 +1,6 @@
+val ossrhUsername: String by project
+val ossrhPassword: String by project
+
 plugins {
     kotlin("jvm") version "1.6.20"
     `java-library`
@@ -16,11 +19,6 @@ java {
     withJavadocJar()
 }
 
-artifacts {
-    archives(tasks["sourcesJar"])
-    archives(tasks["javadocJar"])
-}
-
 repositories {
     mavenLocal()
     mavenCentral()
@@ -36,6 +34,21 @@ dependencies {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "Sonatype"
+            url = if (version.toString().endsWith("SNAPSHOT")) {
+                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            } else {
+                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
     publications {
         create<MavenPublication>("dikt") {
             from(components["java"])
@@ -71,7 +84,8 @@ publishing {
 }
 
 signing {
-    sign(configurations.archives.get())
+    sign(publishing.publications)
+//    sign(configurations.archives.get())
 }
 
 val testsJava8 = tasks.register<Test>("testsJava8") {
