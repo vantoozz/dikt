@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "1.6.20"
     `java-library`
     `maven-publish`
+    signing
 }
 
 kotlin {
@@ -13,6 +14,11 @@ kotlin {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+artifacts {
+    archives(tasks["sourcesJar"])
+    archives(tasks["javadocJar"])
 }
 
 repositories {
@@ -35,9 +41,37 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.1.0"
+            version = "0.1.1"
+
+            pom {
+                name.set("Dikt")
+                description.set("Dependency Injection library for Kotlin")
+                url.set("https://github.com/vantoozz/dikt")
+                licenses {
+                    license {
+                        name.set("The MIT License (MIT)")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("vantoozz")
+                        name.set("Ivan Nikitin")
+                        email.set("vantoozz@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:https://github.com/vantoozz/dikt.git")
+                    developerConnection.set("scm:git:https://github.com/vantoozz/dikt.git")
+                    url.set("https://github.com/vantoozz/dikt")
+                }
+            }
         }
     }
+}
+
+signing {
+    sign(configurations.archives.get())
 }
 
 val testsJava8 = tasks.register<Test>("testsJava8") {
