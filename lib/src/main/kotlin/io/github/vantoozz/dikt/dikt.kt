@@ -34,6 +34,14 @@ inline infix fun <reified T : Any> MutableContainer.put(
     implementation: T?,
 ) = set(T::class) { implementation }
 
+inline fun <reified T : Any> MutableContainer.register(
+    factory: Factory<T>,
+) = set(T::class) { factory.build(this) }
+
+inline fun <reified T : Any> MutableContainer.register(
+    factoryClass: KClass<out Factory<T>>,
+) = set(T::class) { get(factoryClass)?.build(this) }
+
 fun dikt(builder: MutableContainer.() -> Unit): Container =
     KotlinReflectionContainer().apply {
         builder()
