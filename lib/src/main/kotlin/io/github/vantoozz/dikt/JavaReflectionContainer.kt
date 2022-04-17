@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 class JavaReflectionContainer : Container {
 
     private val implementations: MutableMap<Class<*>, Any> = mutableMapOf()
-    private val providers: MutableMap<Class<*>, () -> Any> = mutableMapOf()
+    private val providers: MutableMap<Class<*>, () -> Any?> = mutableMapOf()
 
     private val basicJavaTypes: Set<Class<*>> =
         basicTypes.map { basicType -> basicType.java }.toSet()
@@ -15,7 +15,7 @@ class JavaReflectionContainer : Container {
         providers.remove(klass)
     }
 
-    override fun <T : Any> set(klass: KClass<T>, provider: () -> T) {
+    override fun <T : Any> set(klass: KClass<T>, provider: () -> T?) {
         providers[klass.javaObjectType] = provider
         implementations.remove(klass.javaObjectType)
     }
@@ -68,7 +68,7 @@ class JavaReflectionContainer : Container {
     private fun <T : Any> provided(klass: Class<T>) =
         providers[klass]?.let { provider ->
             provider()
-                .takeIf { klass.isAssignableFrom(it.javaClass) }
+                ?.takeIf { klass.isAssignableFrom(it.javaClass) }
                 ?.let { implementation ->
                     implementation as T
                     saveImplementation(klass, implementation)

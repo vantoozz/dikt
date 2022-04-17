@@ -6,8 +6,13 @@ interface Container {
 
     operator fun <T : Any> get(klass: KClass<T>): T?
 
-    operator fun <T : Any> set(klass: KClass<T>, provider: () -> T)
+    operator fun <T : Any> set(klass: KClass<T>, provider: () -> T?)
 }
+
+inline operator fun <reified T : Any> Container.set(
+    klass: KClass<T>,
+    implementation: KClass<out T>,
+) = set(klass) { get(implementation) }
 
 inline fun <reified T : Any> Container.get(): T? = get(T::class)
 

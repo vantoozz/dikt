@@ -11,3 +11,11 @@ internal class ServiceWithNoDependencies : Service {
 internal class AnotherServiceWithNoDependencies : Service {
     override fun makeString() = "Another service with no dependencies"
 }
+
+internal class ServiceWithDependency(
+    private val dependency: SomeTypeWithStringDependency,
+) : Service {
+    override fun makeString() =
+        "Service with dependency [${dependency.makeString()}]"
+
+}

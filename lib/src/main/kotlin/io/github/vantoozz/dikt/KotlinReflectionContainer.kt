@@ -8,14 +8,14 @@ import kotlin.reflect.full.isSubclassOf
 class KotlinReflectionContainer : Container {
 
     private val implementations: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val providers: MutableMap<KClass<*>, () -> Any> = mutableMapOf()
+    private val providers: MutableMap<KClass<*>, () -> Any?> = mutableMapOf()
 
     private fun saveImplementation(klass: KClass<*>, implementation: Any) {
         implementations[klass] = implementation
         providers.remove(klass)
     }
 
-    override fun <T : Any> set(klass: KClass<T>, provider: () -> T) {
+    override fun <T : Any> set(klass: KClass<T>, provider: () -> T?) {
         providers[klass] = provider
         implementations.remove(klass)
     }
@@ -82,7 +82,7 @@ class KotlinReflectionContainer : Container {
     private fun <T : Any> provided(klass: KClass<T>) =
         providers[klass]?.let { provider ->
             provider()
-                .takeIf { it::class.isSubclassOf(klass) }
+                ?.takeIf { it::class.isSubclassOf(klass) }
                 ?.let { implementation ->
                     implementation as T
                     saveImplementation(klass, implementation)

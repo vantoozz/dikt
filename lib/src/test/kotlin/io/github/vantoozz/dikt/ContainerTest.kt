@@ -70,7 +70,7 @@ internal class ContainerTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
     fun `it binds provider via indexed access operator`(container: Container) {
-        container[SomeTypeWithNoDependencies::class] = { SomeTypeWithNoDependencies() }
+        container.set(SomeTypeWithNoDependencies::class) { SomeTypeWithNoDependencies() }
 
         val service = container[SomeTypeWithNoDependencies::class]
 
@@ -256,7 +256,7 @@ internal class ContainerTest {
     @MethodSource("containers")
     fun `it creates object using provider`(container: Container) {
 
-        container[Service::class] = { ServiceWithNoDependencies() }
+        container.set(Service::class) { ServiceWithNoDependencies() }
 
         val service = container[Service::class]
 
@@ -333,7 +333,7 @@ internal class ContainerTest {
     fun `it keeps provider for the same type`(container: Container) {
 
         container[Service::class] = ServiceWithNoDependencies()
-        container[Service::class] = { AnotherServiceWithNoDependencies() }
+        container.set(Service::class) { AnotherServiceWithNoDependencies() }
 
         val service = container[Service::class]
 
@@ -347,7 +347,7 @@ internal class ContainerTest {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
-    fun `it keeps singleton for the same type`(container: Container) {
+    fun `it replaces implementation for the same type`(container: Container) {
 
         container[Service::class] = { ServiceWithNoDependencies() }
         container[Service::class] = AnotherServiceWithNoDependencies()
@@ -358,6 +358,37 @@ internal class ContainerTest {
 
         assertEquals(
             "Another service with no dependencies",
+            service.makeString()
+        )
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("containers")
+    fun `it replaces implementation for the same type with null`(container: Container) {
+
+        container[Service::class] = { ServiceWithNoDependencies() }
+        container[Service::class] = { null }
+
+        val service = container[Service::class]
+
+        assertNull(service)
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("containers")
+    fun `it binds implementation by its type`(container: Container) {
+        container.singleton(SomeTypeWithStringDependency("Some value"))
+
+        container[Service::class] = ServiceWithDependency::class
+
+        val service = container[Service::class]
+
+        assertTrue(service is ServiceWithDependency)
+
+        assertEquals(
+            "Service with dependency [" +
+                    "Some type with string dependency [" +
+                    "Some value]]",
             service.makeString()
         )
     }
