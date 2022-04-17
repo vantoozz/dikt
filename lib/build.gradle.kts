@@ -54,7 +54,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.1.1"
+            version = "0.2.0"
 
             pom {
                 name.set("Dikt")

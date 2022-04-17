@@ -5,17 +5,17 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 
-class KotlinReflectionContainer : Container {
+class KotlinReflectionContainer : MutableContainer {
 
     private val implementations: MutableMap<KClass<*>, Any> = mutableMapOf()
-    private val providers: MutableMap<KClass<*>, () -> Any?> = mutableMapOf()
+    private val providers: MutableMap<KClass<*>, (Container) -> Any?> = mutableMapOf()
 
     private fun saveImplementation(klass: KClass<*>, implementation: Any) {
         implementations[klass] = implementation
         providers.remove(klass)
     }
 
-    override fun <T : Any> set(klass: KClass<T>, provider: () -> T?) {
+    override fun <T : Any> set(klass: KClass<T>, provider: (Container) -> T?) {
         providers[klass] = provider
         implementations.remove(klass)
     }
@@ -81,7 +81,7 @@ class KotlinReflectionContainer : Container {
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> provided(klass: KClass<T>) =
         providers[klass]?.let { provider ->
-            provider()
+            provider(this)
                 ?.takeIf { it::class.isSubclassOf(klass) }
                 ?.let { implementation ->
                     implementation as T

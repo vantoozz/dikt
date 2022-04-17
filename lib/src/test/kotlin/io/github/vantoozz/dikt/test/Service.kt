@@ -19,3 +19,12 @@ internal class ServiceWithDependency(
         "Service with dependency [${dependency.makeString()}]"
 
 }
+
+internal class ServiceDecorator(
+    private val service: Service,
+    private val string: String,
+) : Service {
+    override fun makeString() =
+        "Service decorator {$string} [${service.makeString()}]"
+
+}
