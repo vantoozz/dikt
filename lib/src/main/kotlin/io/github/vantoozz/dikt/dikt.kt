@@ -34,8 +34,7 @@ inline infix fun <reified T : Any> MutableContainer.put(
     implementation: T?,
 ) = set(T::class) { implementation }
 
-fun dikt(builder: MutableContainer.() -> Unit): Container {
-    return KotlinReflectionContainer().apply {
-        builder(this)
+fun dikt(builder: MutableContainer.() -> Unit): Container =
+    KotlinReflectionContainer().apply {
+        builder()
     }
-}
