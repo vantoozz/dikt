@@ -7,7 +7,6 @@ import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal class MutableContainerBindTest : AbstractContainerTest() {

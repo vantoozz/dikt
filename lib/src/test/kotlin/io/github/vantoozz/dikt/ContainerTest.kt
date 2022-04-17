@@ -126,7 +126,6 @@ internal class ContainerTest : AbstractContainerTest() {
         assertNull(container[SomeTypeWithBooleanDependency::class])
     }
 
-
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
     fun `it creates object of type`(container: MutableContainer) {
@@ -209,7 +208,6 @@ internal class ContainerTest : AbstractContainerTest() {
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
     fun `it binds implementation with infix notation`(container: MutableContainer) {
-
 
     }
 
