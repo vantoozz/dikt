@@ -6,6 +6,7 @@ import io.github.vantoozz.dikt.test.ServiceWithDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 internal class BuilderTest {
@@ -46,5 +47,31 @@ internal class BuilderTest {
                     "Some value]]]",
             service.makeString()
         )
+    }
+
+    @Test
+    fun `it provides error stack`() {
+
+        val container = dikt({
+            throw RuntimeException(
+                "Cannot resolve " + it.joinToString(" -> "))
+        }) {
+            bind<Service> {
+                ServiceDecorator(
+                    it[ServiceWithDependency::class]!!,
+                    "Some string"
+                )
+            }
+        }
+
+        val exception = assertFailsWith<RuntimeException> {
+            container[Service::class]
+        }
+
+        assertEquals("Cannot resolve " +
+                "class io.github.vantoozz.dikt.test.ServiceWithDependency -> " +
+                "class io.github.vantoozz.dikt.test.SomeTypeWithStringDependency -> " +
+                "class kotlin.String",
+            exception.message)
     }
 }

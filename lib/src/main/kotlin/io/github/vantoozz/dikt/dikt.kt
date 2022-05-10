@@ -42,7 +42,13 @@ inline fun <reified T : Any> MutableContainer.register(
     factoryClass: KClass<out Factory<T>>,
 ) = set(T::class) { get(factoryClass)?.build(this) }
 
-fun dikt(builder: MutableContainer.() -> Unit): Container =
-    KotlinReflectionContainer().apply {
+fun dikt(builder: MutableContainer.() -> Unit) =
+    dikt(null, builder)
+
+fun dikt(
+    onResolutionFailed: ((List<KClass<*>>) -> Unit)?,
+    builder: MutableContainer.() -> Unit,
+): Container =
+    KotlinReflectionContainer(onResolutionFailed).apply {
         builder()
     }
