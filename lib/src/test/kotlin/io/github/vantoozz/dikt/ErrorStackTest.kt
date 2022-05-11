@@ -88,8 +88,9 @@ internal class ErrorStackTest {
         assertEquals(
             "Cannot resolve " +
                     "class io.github.vantoozz.dikt.test.SomeTypeWithTwoDependencies -> " +
-                    "class io.github.vantoozz.dikt.test.SomeTypeWithBooleanDependency -> " +
-                    "class kotlin.Boolean",
+                    "class io.github.vantoozz.dikt.test.AnotherTypeWithTwoDependencies -> " +
+                    "class io.github.vantoozz.dikt.test.SomeTypeWithThreeStringsDependencies -> " +
+                    "class kotlin.String",
             exception.message
         )
     }
