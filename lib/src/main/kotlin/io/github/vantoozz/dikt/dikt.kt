@@ -44,9 +44,6 @@ inline fun <reified T : Any> MutableContainer.register(
     factoryClass: KClass<out Factory<T>>,
 ) = set(T::class) { get(factoryClass)?.build(this) }
 
-fun dikt(builder: MutableContainer.() -> Unit) =
-    dikt(null, builder)
-
 fun <T : RuntimeException> diktThrowing(
     exceptionClass: KClass<T>,
     builder: MutableContainer.() -> Unit,
@@ -72,6 +69,9 @@ fun <T : RuntimeException> diktThrowing(
                 }
         }
 }, builder)
+
+fun dikt(builder: MutableContainer.() -> Unit) =
+    dikt(null, builder)
 
 fun dikt(
     onResolutionFailed: ((List<KClass<*>>) -> Unit)?,

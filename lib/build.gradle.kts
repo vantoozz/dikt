@@ -2,7 +2,7 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
     `java-library`
     `maven-publish`
     signing
@@ -25,7 +25,6 @@ repositories {
 }
 
 dependencies {
-//    implementation(kotlin("bom"))
     implementation(kotlin("reflect"))
 
     testImplementation(kotlin("test"))
