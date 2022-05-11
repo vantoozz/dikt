@@ -65,10 +65,32 @@ internal class ErrorStackTest {
             container[Service::class]
         }
 
-        assertEquals("Cannot resolve " +
-                "class io.github.vantoozz.dikt.test.ServiceWithDependency -> " +
-                "class io.github.vantoozz.dikt.test.SomeTypeWithStringDependency -> " +
-                "class kotlin.String",
-            exception.message)
+        assertEquals(
+            "Cannot resolve " +
+                    "class io.github.vantoozz.dikt.test.ServiceWithDependency -> " +
+                    "class io.github.vantoozz.dikt.test.SomeTypeWithStringDependency -> " +
+                    "class kotlin.String",
+            exception.message
+        )
+    }
+
+    @Test
+    fun `it clears error stack`() {
+
+        val container = diktThrowing(SomeException::class) {
+            put { SomeTypeWithStringDependency("some string") }
+        }
+
+        val exception = assertFailsWith<SomeException> {
+            container[SomeTypeWithTwoDependencies::class]
+        }
+
+        assertEquals(
+            "Cannot resolve " +
+                    "class io.github.vantoozz.dikt.test.SomeTypeWithTwoDependencies -> " +
+                    "class io.github.vantoozz.dikt.test.SomeTypeWithBooleanDependency -> " +
+                    "class kotlin.Boolean",
+            exception.message
+        )
     }
 }
