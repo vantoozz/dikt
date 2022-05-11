@@ -22,12 +22,15 @@ class KotlinReflectionContainer(
         implementations.remove(klass)
     }
 
-    override fun <T : Any> get(klass: KClass<T>): T? {
-        val stack = mutableListOf<KClass<*>>()
-        val instance = getTraced(klass, stack)
-        if(instance == null )onResolutionFailed?.invoke(stack)
-        return instance
-    }
+    override fun <T : Any> get(klass: KClass<T>): T? =
+        mutableListOf<KClass<*>>().let { stack ->
+            getTraced(klass, stack).also {
+                if (it == null) {
+                    onResolutionFailed?.invoke(stack)
+                }
+            }
+        }
+
 
     private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>) =
         stack.add(klass).run {
