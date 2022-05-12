@@ -207,12 +207,6 @@ internal class ContainerTest : AbstractContainerTest() {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
-    fun `it binds implementation with infix notation`(container: MutableContainer) {
-
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
     fun `it keeps provider for the same type`(container: MutableContainer) {
 
         container[Service::class] = ServiceWithNoDependencies()

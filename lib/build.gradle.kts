@@ -2,7 +2,7 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
     `java-library`
     `maven-publish`
     signing
@@ -25,7 +25,6 @@ repositories {
 }
 
 dependencies {
-//    implementation(kotlin("bom"))
     implementation(kotlin("reflect"))
 
     testImplementation(kotlin("test"))
@@ -54,7 +53,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.3.0"
+            version = "0.4.0"
 
             pom {
                 name.set("Dikt")
