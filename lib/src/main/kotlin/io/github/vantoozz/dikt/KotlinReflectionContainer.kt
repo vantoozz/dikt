@@ -76,20 +76,16 @@ class KotlinReflectionContainer(
         klass: KClass<T>, stack: MutableList<KClass<*>>,
     ): T? = klass
         .constructors
-        .filter { it.parameters.isNotEmpty() }
-        .associateWith { ctor ->
-            ctor.parameters.map { parameter ->
+        .filter { ctor -> ctor.parameters.isNotEmpty() }
+        .firstOrNull { ctor ->
+            ctor.parameters.all { parameter ->
                 parameter.type.classifier.let { classifier ->
                     if (classifier is KClass<*>) {
                         getTraced(classifier, stack) != null
                     } else false
                 }
             }
-        }.entries
-        .firstOrNull { entry ->
-            entry.value.all { it }
         }
-        ?.key
         ?.let { ctor ->
             ctor.call(
                 *(ctor.parameters.map {
