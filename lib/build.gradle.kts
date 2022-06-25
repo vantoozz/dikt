@@ -53,7 +53,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.4.0"
+            version = "0.5.0"
 
             pom {
                 name.set("Dikt")
@@ -84,7 +84,6 @@ publishing {
 
 signing {
     sign(publishing.publications)
-//    sign(configurations.archives.get())
 }
 
 val testsJava8 = tasks.register<Test>("testsJava8") {
