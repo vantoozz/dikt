@@ -2,7 +2,7 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
     `java-library`
     `maven-publish`
     signing
@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     jvmToolchain {
-        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
