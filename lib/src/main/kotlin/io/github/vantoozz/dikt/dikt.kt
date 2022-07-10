@@ -44,6 +44,23 @@ inline fun <reified T : Any> MutableContainer.register(
     factoryClass: KClass<out Factory<T>>,
 ) = set(T::class) { get(factoryClass)?.build(this) }
 
+inline fun <reified D : Any> MutableContainer.using(
+    dependency: KClass<D>,
+    builder: MutableContainer.(D) -> Unit,
+) = get(dependency)?.let {
+    builder(it)
+}
+
+inline fun <reified D : Any, reified T : Any> MutableContainer.putUsing(
+    dependency: KClass<D>,
+    noinline provider: (D) -> T?,
+) = set(T::class) {
+    get(dependency)?.let {
+        provider(it)
+    }
+}
+
+
 fun <T : RuntimeException> diktThrowing(
     exceptionClass: KClass<T>,
     builder: MutableContainer.() -> Unit,
