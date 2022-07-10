@@ -60,7 +60,6 @@ inline fun <reified D : Any, reified T : Any> MutableContainer.putUsing(
     }
 }
 
-
 fun <T : RuntimeException> diktThrowing(
     exceptionClass: KClass<T>,
     builder: MutableContainer.() -> Unit,

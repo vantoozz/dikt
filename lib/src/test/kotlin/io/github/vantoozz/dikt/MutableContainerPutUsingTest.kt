@@ -7,21 +7,19 @@ import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class UsingTest : AbstractContainerTest() {
+internal class MutableContainerPutUsingTest : AbstractContainerTest() {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("containers")
-    fun `it binds provider using a dependency`(container: MutableContainer) {
+    fun `it puts provider using a dependency`(container: MutableContainer) {
         container.put { SomeTypeWithStringDependency("one") }
 
-        container.using(SomeTypeWithStringDependency::class) { dependency ->
-            put {
-                SomeTypeWithThreeStringsDependencies(
-                    dependency.makeString(),
-                    "two",
-                    "three"
-                )
-            }
+        container.putUsing(SomeTypeWithStringDependency::class) { dependency ->
+            SomeTypeWithThreeStringsDependencies(
+                dependency.makeString(),
+                "two",
+                "three"
+            )
         }
 
         val service = container[SomeTypeWithThreeStringsDependencies::class]

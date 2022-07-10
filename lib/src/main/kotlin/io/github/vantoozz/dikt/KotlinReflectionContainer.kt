@@ -31,7 +31,6 @@ class KotlinReflectionContainer(
             }
         }
 
-
     private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>) =
         stack.add(klass)
             .run {
@@ -41,7 +40,6 @@ class KotlinReflectionContainer(
             }?.also {
                 stack.removeLast()
             }
-
 
     private fun <T : Any> create(klass: KClass<T>, stack: MutableList<KClass<*>>): T? =
         klass
