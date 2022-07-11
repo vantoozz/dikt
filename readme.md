@@ -3,6 +3,7 @@
 Dependency Injection library for Kotlin
 
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.vantoozz/dikt)
+[![build](https://github.com/vantoozz/dikt/actions/workflows/build.yml/badge.svg)](https://github.com/vantoozz/dikt/actions/workflows/build.yml)
 
 ```kotlin
 import io.github.vantoozz.dikt.dikt
