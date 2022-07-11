@@ -6,6 +6,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
+    id("org.jetbrains.kotlinx.kover") version "0.5.0"
 }
 
 kotlin {
@@ -85,20 +86,15 @@ signing {
     sign(publishing.publications)
 }
 
-val testsJava8 = tasks.register<Test>("testsJava8") {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    })
-}
-
-val testsJava17 = tasks.register<Test>("testsJava17") {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    })
-}
-
 tasks.test {
     useJUnitPlatform()
-    dependsOn(testsJava8)
-    dependsOn(testsJava17)
+}
+
+tasks.koverVerify {
+    rule {
+        name = "Minimal line coverage rate in percents"
+        bound {
+            minValue = 99
+        }
+    }
 }
