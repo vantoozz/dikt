@@ -86,20 +86,20 @@ signing {
     sign(publishing.publications)
 }
 
-val testsJava8 = tasks.register<Test>("testsJava8") {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    })
-}
-
-val testsJava17 = tasks.register<Test>("testsJava17") {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    })
-}
+//val testsJava8 = tasks.register<Test>("testsJava8") {
+//    javaLauncher.set(javaToolchains.launcherFor {
+//        languageVersion.set(JavaLanguageVersion.of(8))
+//    })
+//}
+//
+//val testsJava17 = tasks.register<Test>("testsJava17") {
+//    javaLauncher.set(javaToolchains.launcherFor {
+//        languageVersion.set(JavaLanguageVersion.of(17))
+//    })
+//}
 
 tasks.test {
     useJUnitPlatform()
-    dependsOn(testsJava8)
-    dependsOn(testsJava17)
+//    dependsOn(testsJava8)
+//    dependsOn(testsJava17)
 }
