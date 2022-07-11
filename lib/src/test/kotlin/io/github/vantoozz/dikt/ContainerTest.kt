@@ -1,26 +1,26 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.*
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-internal class ContainerTest : AbstractContainerTest() {
+internal class ContainerTest {
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it returns null`(container: MutableContainer) {
+    @Test
+    fun `it returns null`() {
+        val container = KotlinReflectionContainer()
 
         val service = container[Service::class]
 
         assertNull(service)
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it returns predefined object of type`(container: MutableContainer) {
+    @Test
+    fun `it returns predefined object of type`() {
+        val container = KotlinReflectionContainer()
+
         container[SomeTypeWithNoDependencies::class] = SomeTypeWithNoDependencies()
 
         val service = container[SomeTypeWithNoDependencies::class]
@@ -30,9 +30,10 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it returns predefined object of reified type`(container: MutableContainer) {
+    @Test
+    fun `it returns predefined object of reified type`() {
+        val container = KotlinReflectionContainer()
+
         container[SomeTypeWithNoDependencies::class] = SomeTypeWithNoDependencies()
 
         val service = container.get<SomeTypeWithNoDependencies>()
@@ -42,9 +43,10 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it returns object via indexed access operator`(container: MutableContainer) {
+    @Test
+    fun `it returns object via indexed access operator`() {
+        val container = KotlinReflectionContainer()
+
         container[SomeTypeWithNoDependencies::class] = SomeTypeWithNoDependencies()
 
         val service = container[SomeTypeWithNoDependencies::class]
@@ -54,9 +56,10 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds implementation via indexed access operator`(container: MutableContainer) {
+    @Test
+    fun `it binds implementation via indexed access operator`() {
+        val container = KotlinReflectionContainer()
+
         container[SomeTypeWithNoDependencies::class] = SomeTypeWithNoDependencies()
 
         val service = container[SomeTypeWithNoDependencies::class]
@@ -66,69 +69,79 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default string as dependency`(container: MutableContainer) {
+    @Test
+    fun `it does not create default string as dependency`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[SomeTypeWithStringDependency::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default string`(container: MutableContainer) {
+    @Test
+    fun `it does not create default string`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[String::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default number`(container: MutableContainer) {
+    @Test
+    fun `it does not create default number`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Number::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default integer`(container: MutableContainer) {
+    @Test
+    fun `it does not create default integer`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Int::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default long`(container: MutableContainer) {
+    @Test
+    fun `it does not create default long`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Long::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default byte`(container: MutableContainer) {
+    @Test
+    fun `it does not create default byte`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Byte::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default double`(container: MutableContainer) {
+    @Test
+    fun `it does not create default double`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Double::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default float`(container: MutableContainer) {
+    @Test
+    fun `it does not create default float`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[Float::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default number as dependency`(container: MutableContainer) {
+    @Test
+    fun `it does not create default number as dependency`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[SomeTypeWithNumberDependency::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not create default boolean as dependency`(container: MutableContainer) {
+    @Test
+    fun `it does not create default boolean as dependency`() {
+        val container = KotlinReflectionContainer()
+
         assertNull(container[SomeTypeWithBooleanDependency::class])
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it creates object of type`(container: MutableContainer) {
+    @Test
+    fun `it creates object of type`() {
+        val container = KotlinReflectionContainer()
 
         val service = container[SomeTypeWithNoDependencies::class]
 
@@ -137,9 +150,9 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it creates object of type with optional dependency`(container: MutableContainer) {
+    @Test
+    fun `it creates object of type with optional dependency`() {
+        val container = KotlinReflectionContainer()
 
         val service = container[SomeTypeWithOptionalDependency::class]
 
@@ -148,9 +161,9 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with optional dependency", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it creates object of type with default value of dependency`(container: MutableContainer) {
+    @Test
+    fun `it creates object of type with default value of dependency`() {
+        val container = KotlinReflectionContainer()
 
         val service = container[SomeTypeWithDefaultValueOfDependency::class]
 
@@ -159,9 +172,9 @@ internal class ContainerTest : AbstractContainerTest() {
         assertEquals("Some type with default value of dependency", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it creates object of type with dependency`(container: MutableContainer) {
+    @Test
+    fun `it creates object of type with dependency`() {
+        val container = KotlinReflectionContainer()
 
         container[Service::class] = ServiceWithNoDependencies()
 
@@ -175,9 +188,9 @@ internal class ContainerTest : AbstractContainerTest() {
         )
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it creates object of type with created dependency`(container: MutableContainer) {
+    @Test
+    fun `it creates object of type with created dependency`() {
+        val container = KotlinReflectionContainer()
 
         val service = container[SomeTypeDependingOnType::class]
 
@@ -189,9 +202,9 @@ internal class ContainerTest : AbstractContainerTest() {
         )
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds interface to implementation`(container: MutableContainer) {
+    @Test
+    fun `it binds interface to implementation`() {
+        val container = KotlinReflectionContainer()
 
         container[Service::class] = { ServiceWithNoDependencies() }
 
@@ -205,9 +218,9 @@ internal class ContainerTest : AbstractContainerTest() {
         )
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it keeps provider for the same type`(container: MutableContainer) {
+    @Test
+    fun `it keeps provider for the same type`() {
+        val container = KotlinReflectionContainer()
 
         container[Service::class] = ServiceWithNoDependencies()
         container[Service::class] = { AnotherServiceWithNoDependencies() }
@@ -222,9 +235,9 @@ internal class ContainerTest : AbstractContainerTest() {
         )
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it replaces implementation for the same type`(container: MutableContainer) {
+    @Test
+    fun `it replaces implementation for the same type`() {
+        val container = KotlinReflectionContainer()
 
         container[Service::class] = { ServiceWithNoDependencies() }
         container[Service::class] = AnotherServiceWithNoDependencies()
@@ -239,9 +252,9 @@ internal class ContainerTest : AbstractContainerTest() {
         )
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it replaces implementation for the same type with null`(container: MutableContainer) {
+    @Test
+    fun `it replaces implementation for the same type with null`() {
+        val container = KotlinReflectionContainer()
 
         container[Service::class] = { ServiceWithNoDependencies() }
         container[Service::class] = { null }
@@ -251,9 +264,9 @@ internal class ContainerTest : AbstractContainerTest() {
         assertNull(service)
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it does not bind singleton object to its interface`(container: MutableContainer) {
+    @Test
+    fun `it does not bind singleton object to its interface`() {
+        val container = KotlinReflectionContainer()
 
         container put ServiceWithNoDependencies()
 
@@ -262,9 +275,10 @@ internal class ContainerTest : AbstractContainerTest() {
         assertNull(service)
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it passes itself to provider`(container: MutableContainer) {
+    @Test
+    fun `it passes itself to provider`() {
+        val container = KotlinReflectionContainer()
+
         container put SomeTypeWithStringDependency("Some value")
 
         container[Service::class] = {

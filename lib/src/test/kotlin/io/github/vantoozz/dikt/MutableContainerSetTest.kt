@@ -1,16 +1,16 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.*
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class MutableContainerSetTest : AbstractContainerTest() {
+internal class MutableContainerSetTest {
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds provider via indexed access operator`(container: MutableContainer) {
+    @Test
+    fun `it binds provider via indexed access operator`() {
+        val container = KotlinReflectionContainer()
+
         container[SomeTypeWithNoDependencies::class] = { SomeTypeWithNoDependencies() }
 
         val service = container[SomeTypeWithNoDependencies::class]
@@ -20,9 +20,10 @@ internal class MutableContainerSetTest : AbstractContainerTest() {
         assertEquals("Some type with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds implementation via indexed access operator`(container: MutableContainer) {
+    @Test
+    fun `it binds implementation via indexed access operator`() {
+        val container = KotlinReflectionContainer()
+
         container[Service::class] = ServiceWithNoDependencies()
 
         val service = container[Service::class]
@@ -32,9 +33,10 @@ internal class MutableContainerSetTest : AbstractContainerTest() {
         assertEquals("Service with no dependencies", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds implementation class via indexed access operator`(container: MutableContainer) {
+    @Test
+    fun `it binds implementation class via indexed access operator`() {
+        val container = KotlinReflectionContainer()
+
         container put SomeTypeWithStringDependency("Some value")
 
         container[Service::class] = ServiceWithDependency::class

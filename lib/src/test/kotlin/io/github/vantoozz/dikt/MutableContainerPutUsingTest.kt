@@ -2,16 +2,16 @@ package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithThreeStringsDependencies
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class MutableContainerPutUsingTest : AbstractContainerTest() {
+internal class MutableContainerPutUsingTest {
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it puts provider using a dependency`(container: MutableContainer) {
+    @Test
+    fun `it puts provider using a dependency`() {
+        val container = KotlinReflectionContainer()
+
         container.put { SomeTypeWithStringDependency("one") }
 
         container.putUsing(SomeTypeWithStringDependency::class) { dependency ->

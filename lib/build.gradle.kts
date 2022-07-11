@@ -28,8 +28,6 @@ dependencies {
     implementation(kotlin("reflect"))
 
     testImplementation(kotlin("test"))
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
 }
 
 publishing {

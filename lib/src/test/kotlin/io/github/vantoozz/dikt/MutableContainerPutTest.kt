@@ -1,16 +1,17 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class MutableContainerPutTest : AbstractContainerTest() {
+internal class MutableContainerPutTest {
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds provider with infix notation`(container: MutableContainer) {
+    @Test
+
+    fun `it binds provider with infix notation`() {
+        val container = KotlinReflectionContainer()
+
         container put { SomeTypeWithStringDependency("something") }
 
         val service = container[SomeTypeWithStringDependency::class]
@@ -20,9 +21,10 @@ internal class MutableContainerPutTest : AbstractContainerTest() {
         assertEquals("Some type with string dependency [something]", service.makeString())
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("containers")
-    fun `it binds implementation with infix notation`(container: MutableContainer) {
+    @Test
+    fun `it binds implementation with infix notation`() {
+        val container = KotlinReflectionContainer()
+
         container put SomeTypeWithStringDependency("something")
 
         val service = container[SomeTypeWithStringDependency::class]
