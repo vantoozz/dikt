@@ -2,11 +2,11 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.10"
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.kotlinx.kover") version "0.5.0"
+    id("org.jetbrains.kotlinx.kover") version "0.5.1"
 }
 
 kotlin {
@@ -51,7 +51,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.7.0"
+            version = "0.8.0"
 
             pom {
                 name.set("Dikt")
