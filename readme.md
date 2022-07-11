@@ -27,7 +27,7 @@ fun main() {
         }                                       // into it
     }
 
-    val myService = container[MyService::class] // And the container
+    val myService = container[MyService::class] // And then the container
                                                 // creates an object for us
 
     myService?.run()                            // Prints "Connecting to some_url"
