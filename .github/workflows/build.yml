@@ -23,7 +23,7 @@ jobs:
         with:
           name: reports
           path: lib/build/reports
-        - uses: codecov/codecov-action@v3
-          with:
-            token: ${{ secrets.CODECOVTOKEN }}
-            files: ./lib/build/reports/kover/report.xml
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOVTOKEN }}
+          files: ./lib/build/reports/kover/report.xml
