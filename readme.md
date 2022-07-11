@@ -12,7 +12,7 @@ data class DBConnection(                        // Some fake service
     val url: String,
 )
 
-class MyService(                                // Another service,
+class MyService(                                // Another service
     private val db: DBConnection,               // depending on the fake one
 ) {
     fun run() =
