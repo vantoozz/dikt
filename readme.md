@@ -5,7 +5,6 @@ Dependency Injection library for Kotlin
 ![Maven Central](https://img.shields.io/maven-central/v/io.github.vantoozz/dikt)
 
 ```kotlin
-
 import io.github.vantoozz.dikt.dikt
 import io.github.vantoozz.dikt.put
 
@@ -33,6 +32,4 @@ fun main() {
 
     myService?.run()                            // Prints "Connecting to some_url"
 }
-
-
 ```
