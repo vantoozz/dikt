@@ -4,6 +4,7 @@ import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithThreeStringsDependencies
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal class MutableContainerPutUsingTest {
@@ -30,6 +31,23 @@ internal class MutableContainerPutUsingTest {
             "Some type with three string dependencies: Some type with string dependency [one] two three",
             service.makeString()
         )
+    }
+
+    @Test
+    fun `it puts nothing if dependency not resolved`() {
+        val container = KotlinReflectionContainer()
+
+        container.putUsing(SomeTypeWithStringDependency::class) { dependency ->
+            SomeTypeWithThreeStringsDependencies(
+                dependency.makeString(),
+                "two",
+                "three"
+            )
+        }
+
+        val service = container[SomeTypeWithThreeStringsDependencies::class]
+
+        assertNull(service)
     }
 
 }
