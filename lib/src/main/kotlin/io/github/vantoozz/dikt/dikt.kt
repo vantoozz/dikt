@@ -72,9 +72,9 @@ fun <T : RuntimeException> diktThrowing(
                 }
                 .filter { ctor -> ctor.parameters.size == 1 }
                 .firstOrNull { ctor ->
-                    ctor.parameters[0].type.classifier.let {
-                        it is KClass<*> && it.isSubclassOf(String::class)
-                    }
+                    ctor.parameters[0].type.classifier
+                        .let { it as KClass<*> }
+                        .isSubclassOf(String::class)
                 }?.let { ctor ->
                     throw ctor.call(message)
                 }

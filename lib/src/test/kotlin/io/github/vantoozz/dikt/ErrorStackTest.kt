@@ -31,12 +31,6 @@ internal class ErrorStackTest {
     fun `it throws runtime exception`() {
 
         val container = diktThrowing(SomeOtherException::class) {
-            bind<Service> {
-                ServiceDecorator(
-                    it[ServiceWithDependency::class]!!,
-                    "Some string"
-                )
-            }
         }
 
         val exception = assertFailsWith<RuntimeException> {
@@ -91,6 +85,36 @@ internal class ErrorStackTest {
                     "class io.github.vantoozz.dikt.test.AnotherTypeWithTwoDependencies -> " +
                     "class io.github.vantoozz.dikt.test.SomeTypeWithThreeStringsDependencies -> " +
                     "class kotlin.String",
+            exception.message
+        )
+    }
+
+    @Test
+    fun `it throws runtime exception if private ctor`() {
+        val container = diktThrowing(SomeExceptionWithPrivateCtor::class) {
+        }
+
+        val exception = assertFailsWith<RuntimeException> {
+            container[Service::class]
+        }
+
+        assertEquals(
+            "Cannot create an exception of the requested type",
+            exception.message
+        )
+    }
+
+    @Test
+    fun `it throws runtime exception if multiple parameters ctor`() {
+        val container = diktThrowing(SomeExceptionWithMultipleParams::class) {
+        }
+
+        val exception = assertFailsWith<RuntimeException> {
+            container[Service::class]
+        }
+
+        assertEquals(
+            "Cannot create an exception of the requested type",
             exception.message
         )
     }

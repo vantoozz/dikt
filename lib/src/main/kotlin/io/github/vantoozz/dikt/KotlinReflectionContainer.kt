@@ -3,23 +3,17 @@ package io.github.vantoozz.dikt
 import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.isSubclassOf
 
 class KotlinReflectionContainer(
     private val onResolutionFailed: ((List<KClass<*>>) -> Unit)? = null,
 ) : MutableContainer {
 
-    private val implementations: MutableMap<KClass<*>, Any> = mutableMapOf()
+    private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
     private val providers: MutableMap<KClass<*>, (Container) -> Any?> = mutableMapOf()
-
-    private fun saveImplementation(klass: KClass<*>, implementation: Any) {
-        implementations[klass] = implementation
-        providers.remove(klass)
-    }
 
     override fun <T : Any> set(klass: KClass<T>, provider: (Container) -> T?) {
         providers[klass] = provider
-        implementations.remove(klass)
+        instances.remove(klass)
     }
 
     override fun <T : Any> get(klass: KClass<T>): T? =
@@ -34,7 +28,7 @@ class KotlinReflectionContainer(
     private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>) =
         stack.add(klass)
             .run {
-                predefined(klass)
+                instantiated(klass)
                     ?: provided(klass)
                     ?: create(klass, stack)
             }?.also {
@@ -45,11 +39,11 @@ class KotlinReflectionContainer(
         klass
             .takeUnless { it.isAbstract }
             ?.let {
-                createViaCtorWithOptionalDependencies(it)
+                createViaCtorWithOnlyOptionalDependencies(it)
                     ?: createViaNotEmptyCtor(it, stack)
             }
 
-    private fun <T : Any> createViaCtorWithOptionalDependencies(
+    private fun <T : Any> createViaCtorWithOnlyOptionalDependencies(
         klass: KClass<T>,
     ): T? = klass
         .takeUnless { basicTypes.contains(it) }
@@ -95,18 +89,19 @@ class KotlinReflectionContainer(
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> provided(klass: KClass<T>) =
         providers[klass]?.let { provider ->
-            provider(this)
-                ?.takeIf { it::class.isSubclassOf(klass) }
-                ?.let { implementation ->
-                    implementation as T
-                    saveImplementation(klass, implementation)
-                    implementation
-                }
+            provider(this)?.let { instance ->
+                instance as T
+                saveInstance(klass, instance)
+                instance
+            }
         }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> predefined(klass: KClass<T>) =
-        implementations[klass]?.takeIf { candidate ->
-            candidate::class.isSubclassOf(klass)
-        } as? T
+    private fun <T : Any> instantiated(klass: KClass<T>) =
+        instances[klass] as? T
+
+    private fun saveInstance(klass: KClass<*>, instance: Any) {
+        instances[klass] = instance
+        providers.remove(klass)
+    }
 }

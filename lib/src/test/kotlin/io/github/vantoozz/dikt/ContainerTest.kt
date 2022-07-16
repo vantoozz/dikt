@@ -189,6 +189,35 @@ internal class ContainerTest {
     }
 
     @Test
+    fun `it creates object of type with generic dependency`() {
+        val container = KotlinReflectionContainer()
+
+        container put SomeTypeWithGenericDependency(
+            SomeTypeWithStringDependency("some string")
+        )
+
+        val service = container[SomeTypeDependingOnGenericService::class]
+
+        assertTrue(service is SomeTypeDependingOnGenericService)
+
+        assertEquals(
+            "Some type depending on generic service: Some type with generic dependency " +
+                    "[Some type with string dependency [some string]]",
+            service.makeString()
+        )
+    }
+
+
+    @Test
+    fun `it does not creates object of generic type`() {
+        val container = KotlinReflectionContainer()
+
+        val service = container[SomeTypeWithGenericDependency::class]
+
+        assertNull(service)
+    }
+
+    @Test
     fun `it creates object of type with created dependency`() {
         val container = KotlinReflectionContainer()
 
