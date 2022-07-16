@@ -1,11 +1,9 @@
 package io.github.vantoozz.dikt
 
-import io.github.vantoozz.dikt.test.Service
-import io.github.vantoozz.dikt.test.ServiceDecorator
-import io.github.vantoozz.dikt.test.ServiceFactory
-import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
+import io.github.vantoozz.dikt.test.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 internal class FactoryTest {
@@ -50,5 +48,35 @@ internal class FactoryTest {
                     "[Some string]]]",
             service.makeString()
         )
+    }
+
+    @Test
+    fun `it registers factory with dependency`() {
+        val container = dikt {
+            put(SomeTypeWithStringDependency("Some string"))
+
+            register(ServiceFactoryWithDependency::class)
+        }
+
+        val service = container[Service::class]
+
+        assertTrue(service is ServiceWithDependency)
+
+        assertEquals(
+            "Service with dependency " +
+                    "[Some type with string dependency [Some string]]",
+            service.makeString()
+        )
+    }
+
+    @Test
+    fun `it returns null if no dependency provided for factory`() {
+        val container = dikt {
+            register(ServiceFactoryWithDependency::class)
+        }
+
+        val service = container[Service::class]
+
+        assertNull(service)
     }
 }

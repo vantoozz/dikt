@@ -10,3 +10,10 @@ internal class ServiceFactory : Factory<Service> {
             "Some string"
         )
 }
+
+internal class ServiceFactoryWithDependency(
+    private val dependency: SomeTypeWithStringDependency,
+) : Factory<Service> {
+    override fun build(container: Container) =
+        ServiceWithDependency(dependency)
+}
