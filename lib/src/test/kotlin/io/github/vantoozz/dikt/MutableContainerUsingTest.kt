@@ -36,7 +36,7 @@ internal class MutableContainerUsingTest {
     }
 
     @Test
-    fun `it returns null if no dependency provided `() {
+    fun `it returns null if no dependency provided`() {
         val container = KotlinReflectionContainer()
 
         container.using(SomeTypeWithStringDependency::class) { dependency ->
