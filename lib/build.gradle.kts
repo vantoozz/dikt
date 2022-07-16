@@ -92,7 +92,7 @@ tasks.koverVerify {
     rule {
         name = "Minimal line coverage rate in percents"
         bound {
-            minValue = 99
+            minValue = 100
         }
     }
 }
