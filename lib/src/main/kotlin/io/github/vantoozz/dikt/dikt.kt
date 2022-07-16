@@ -54,11 +54,7 @@ inline fun <reified D : Any> MutableContainer.using(
 inline fun <reified D : Any, reified T : Any> MutableContainer.putUsing(
     dependency: KClass<D>,
     noinline provider: (D) -> T?,
-) = set(T::class) {
-    get(dependency)?.let {
-        provider(it)
-    }
-}
+) = set(T::class) { get(dependency)?.let { provider(it) } }
 
 fun <T : RuntimeException> diktThrowing(
     exceptionClass: KClass<T>,
