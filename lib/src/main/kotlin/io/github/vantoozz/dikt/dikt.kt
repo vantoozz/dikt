@@ -56,8 +56,8 @@ inline fun <reified D : Any, reified T : Any> MutableContainer.putUsing(
     noinline provider: (D) -> T?,
 ) = set(T::class) { get(dependency)?.let { provider(it) } }
 
-fun <T : RuntimeException> diktThrowing(
-    exceptionClass: KClass<T>,
+fun <E : RuntimeException> diktThrowing(
+    exceptionClass: KClass<E>,
     builder: MutableContainer.() -> Unit,
 ) = dikt({ stack ->
     "Cannot resolve ${stack.joinToString(" -> ")}"
