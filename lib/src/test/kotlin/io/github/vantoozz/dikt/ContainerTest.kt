@@ -1,10 +1,7 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class ContainerTest {
 
@@ -15,6 +12,15 @@ internal class ContainerTest {
         val service = container[Service::class]
 
         assertNull(service)
+    }
+
+    @Test
+    fun `it returns unit`() {
+        val container = KotlinReflectionContainer()
+
+        val service = container[Unit::class]
+
+        assertSame(Unit, service)
     }
 
     @Test

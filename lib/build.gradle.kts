@@ -2,11 +2,11 @@ val ossrhUsername: String by project
 val ossrhPassword: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     `java-library`
     `maven-publish`
     signing
-    id("org.jetbrains.kotlinx.kover") version "0.5.1"
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
 }
 
 kotlin {
@@ -51,7 +51,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.8.0"
+            version = "0.9.0"
 
             pom {
                 name.set("Dikt")
@@ -88,11 +88,13 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.koverVerify {
-    rule {
-        name = "Minimal line coverage rate in percents"
-        bound {
-            minValue = 100
+kover {
+    verify {
+        rule {
+            name = "Minimal line coverage rate in percents"
+            bound {
+                minValue = 100
+            }
         }
     }
 }

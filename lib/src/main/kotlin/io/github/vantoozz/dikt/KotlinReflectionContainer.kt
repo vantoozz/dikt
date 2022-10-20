@@ -28,7 +28,8 @@ class KotlinReflectionContainer(
     private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>) =
         stack.add(klass)
             .run {
-                instantiated(klass)
+                unit(klass)
+                    ?: instantiated(klass)
                     ?: provided(klass)
                     ?: create(klass, stack)
             }?.also {
@@ -95,6 +96,11 @@ class KotlinReflectionContainer(
                 instance
             }
         }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> unit(klass: KClass<T>) =
+        if (klass == Unit::class) Unit as? T
+        else null
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> instantiated(klass: KClass<T>) =
