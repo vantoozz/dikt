@@ -82,9 +82,6 @@ fun <E : RuntimeException> diktThrowing(
         }
 }, builder)
 
-fun dikt(builder: MutableContainer.() -> Unit) =
-    dikt(null, builder)
-
 fun dikt(
     onResolutionFailed: ((List<KClass<*>>) -> Unit)?,
     builder: MutableContainer.() -> Unit,
@@ -92,3 +89,6 @@ fun dikt(
     KotlinReflectionContainer(onResolutionFailed).apply {
         builder()
     }
+
+fun dikt(builder: MutableContainer.() -> Unit) =
+    diktThrowing(RuntimeException::class, builder)

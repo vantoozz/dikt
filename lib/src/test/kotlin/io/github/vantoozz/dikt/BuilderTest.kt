@@ -1,12 +1,12 @@
 package io.github.vantoozz.dikt
 
+import io.github.vantoozz.dikt.test.*
 import io.github.vantoozz.dikt.test.Service
 import io.github.vantoozz.dikt.test.ServiceDecorator
+import io.github.vantoozz.dikt.test.ServiceFactoryWithDependency
 import io.github.vantoozz.dikt.test.ServiceWithDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class BuilderTest {
 
@@ -46,5 +46,23 @@ internal class BuilderTest {
                     "Some value]]]",
             service.makeString()
         )
+    }
+
+    @Test
+    fun `it throws runtime exception by default if failed`() {
+        val container = dikt {}
+
+        assertFailsWith<RuntimeException> {
+            container[ServiceWithDependency::class]
+        }
+    }
+
+    @Test
+    fun `it accepts nulled resolution failed strategy`() {
+        val container = dikt(null) {}
+
+        val service = container[ServiceWithDependency::class]
+
+        assertNull(service)
     }
 }

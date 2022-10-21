@@ -51,7 +51,7 @@ publishing {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.9.0"
+            version = "0.10.0"
 
             pom {
                 name.set("Dikt")
@@ -84,8 +84,22 @@ signing {
     sign(publishing.publications)
 }
 
-tasks.test {
-    useJUnitPlatform()
+
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+
+kotlin {
+    jvmToolchain {
+        languageVersion
+            .set(JavaLanguageVersion.of(8))
+    }
 }
 
 kover {

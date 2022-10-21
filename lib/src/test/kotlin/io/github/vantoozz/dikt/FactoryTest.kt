@@ -10,7 +10,7 @@ internal class FactoryTest {
 
     @Test
     fun `it registers factory`() {
-        val container = dikt {
+        val container = KotlinReflectionContainer().apply {
             put(SomeTypeWithStringDependency("Some string"))
 
             register(ServiceFactory())
@@ -31,7 +31,7 @@ internal class FactoryTest {
 
     @Test
     fun `it registers factory class`() {
-        val container = dikt {
+        val container = KotlinReflectionContainer().apply {
             put(SomeTypeWithStringDependency("Some string"))
 
             register(ServiceFactory::class)
@@ -52,7 +52,7 @@ internal class FactoryTest {
 
     @Test
     fun `it registers factory with dependency`() {
-        val container = dikt {
+        val container = KotlinReflectionContainer().apply {
             put(SomeTypeWithStringDependency("Some string"))
 
             register(ServiceFactoryWithDependency::class)
@@ -71,7 +71,7 @@ internal class FactoryTest {
 
     @Test
     fun `it returns null if no dependency provided for factory`() {
-        val container = dikt {
+        val container = KotlinReflectionContainer().apply {
             register(ServiceFactoryWithDependency::class)
         }
 
