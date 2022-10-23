@@ -9,12 +9,6 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
 }
 
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
-}
-
 java {
     withSourcesJar()
     withJavadocJar()
