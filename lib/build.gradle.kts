@@ -1,6 +1,3 @@
-val ossrhUsername: String by project
-val ossrhPassword: String by project
-
 plugins {
     kotlin("jvm") version "1.7.20"
     `java-library`
@@ -35,8 +32,8 @@ publishing {
             }
 
             credentials {
-                username = ossrhUsername
-                password = ossrhPassword
+                username = project.properties["ossrhUsername"] as String
+                password = project.properties["ossrhPassword"] as String
             }
         }
     }
