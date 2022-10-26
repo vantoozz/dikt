@@ -5,5 +5,5 @@ internal class SomeTypeWithOptionalDependency(
 ) {
     constructor() : this("")
 
-    fun makeString() = "Some type with optional dependency"
+    fun makeString() = "Some type with optional dependency [$string]"
 }

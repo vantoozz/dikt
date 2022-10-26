@@ -1,9 +1,7 @@
 package io.github.vantoozz.dikt
 
-import io.github.vantoozz.dikt.test.*
 import io.github.vantoozz.dikt.test.Service
 import io.github.vantoozz.dikt.test.ServiceDecorator
-import io.github.vantoozz.dikt.test.ServiceFactoryWithDependency
 import io.github.vantoozz.dikt.test.ServiceWithDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import kotlin.test.*

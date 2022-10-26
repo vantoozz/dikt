@@ -164,7 +164,7 @@ internal class ContainerTest {
 
         assertTrue(service is SomeTypeWithOptionalDependency)
 
-        assertEquals("Some type with optional dependency", service.makeString())
+        assertEquals("Some type with optional dependency []", service.makeString())
     }
 
     @Test
@@ -175,7 +175,10 @@ internal class ContainerTest {
 
         assertTrue(service is SomeTypeWithDefaultValueOfDependency)
 
-        assertEquals("Some type with default value of dependency", service.makeString())
+        assertEquals(
+            "Some type with default value of dependency [Some type with string dependency [some string]]",
+            service.makeString()
+        )
     }
 
     @Test
@@ -212,7 +215,6 @@ internal class ContainerTest {
             service.makeString()
         )
     }
-
 
     @Test
     fun `it does not creates object of generic type`() {

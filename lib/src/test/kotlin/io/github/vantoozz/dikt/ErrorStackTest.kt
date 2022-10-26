@@ -33,7 +33,7 @@ internal class ErrorStackTest {
         val container = diktThrowing(SomeOtherException::class) {
         }
 
-        val exception = assertFailsWith<RuntimeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container[Service::class]
         }
 
@@ -94,7 +94,7 @@ internal class ErrorStackTest {
         val container = diktThrowing(SomeExceptionWithPrivateCtor::class) {
         }
 
-        val exception = assertFailsWith<RuntimeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container[Service::class]
         }
 
@@ -109,7 +109,7 @@ internal class ErrorStackTest {
         val container = diktThrowing(SomeExceptionWithMultipleParams::class) {
         }
 
-        val exception = assertFailsWith<RuntimeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container[Service::class]
         }
 

@@ -4,6 +4,7 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    id("io.gitlab.arturbosch.detekt") version "1.21.0"
 }
 
 java {
@@ -74,7 +75,6 @@ publishing {
 signing {
     sign(publishing.publications)
 }
-
 
 tasks {
     test {

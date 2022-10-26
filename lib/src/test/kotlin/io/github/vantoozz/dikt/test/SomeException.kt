@@ -12,8 +12,7 @@ internal class SomeExceptionWithPrivateCtor private constructor(
     override val message: String,
 ) : RuntimeException(message)
 
-
 internal class SomeExceptionWithMultipleParams(
     override val message: String,
     private val anotherMessage: String,
-) : RuntimeException(message)
+) : RuntimeException("$message $anotherMessage")

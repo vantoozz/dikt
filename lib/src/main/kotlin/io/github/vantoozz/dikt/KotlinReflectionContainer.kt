@@ -80,10 +80,10 @@ class KotlinReflectionContainer(
             }
         }
         ?.let { ctor ->
-            ctor.call(
-                *(ctor.parameters.map {
+            ctor.callBy(
+                ctor.parameters.associateWith {
                     getTraced(it.type.classifier as KClass<*>, stack)
-                }).toTypedArray()
+                }
             )
         }
 
