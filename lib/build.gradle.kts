@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.8.0"
     `java-library`
     `maven-publish`
     signing
     id("org.jetbrains.kotlinx.kover") version "0.6.1"
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    id("io.gitlab.arturbosch.detekt") version "1.22.0"
 }
 
 java {
@@ -102,4 +102,8 @@ kover {
             }
         }
     }
+}
+
+detekt {
+
 }

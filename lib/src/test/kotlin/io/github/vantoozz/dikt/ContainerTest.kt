@@ -1,7 +1,25 @@
 package io.github.vantoozz.dikt
 
-import io.github.vantoozz.dikt.test.*
-import kotlin.test.*
+import io.github.vantoozz.dikt.test.AnotherServiceWithNoDependencies
+import io.github.vantoozz.dikt.test.Service
+import io.github.vantoozz.dikt.test.ServiceDecorator
+import io.github.vantoozz.dikt.test.ServiceWithDependency
+import io.github.vantoozz.dikt.test.ServiceWithNoDependencies
+import io.github.vantoozz.dikt.test.SomeTypeDependingOnGenericService
+import io.github.vantoozz.dikt.test.SomeTypeDependingOnService
+import io.github.vantoozz.dikt.test.SomeTypeDependingOnType
+import io.github.vantoozz.dikt.test.SomeTypeWithBooleanDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithDefaultValueOfDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithGenericDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithNoDependencies
+import io.github.vantoozz.dikt.test.SomeTypeWithNumberDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithOptionalDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 internal class ContainerTest {
 

@@ -1,6 +1,14 @@
 package io.github.vantoozz.dikt
 
-import io.github.vantoozz.dikt.test.*
+import io.github.vantoozz.dikt.test.Service
+import io.github.vantoozz.dikt.test.ServiceDecorator
+import io.github.vantoozz.dikt.test.ServiceWithDependency
+import io.github.vantoozz.dikt.test.SomeException
+import io.github.vantoozz.dikt.test.SomeExceptionWithMultipleParams
+import io.github.vantoozz.dikt.test.SomeExceptionWithPrivateCtor
+import io.github.vantoozz.dikt.test.SomeOtherException
+import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
+import io.github.vantoozz.dikt.test.SomeTypeWithTwoDependencies
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

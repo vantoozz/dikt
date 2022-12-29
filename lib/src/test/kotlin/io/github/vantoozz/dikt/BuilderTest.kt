@@ -4,7 +4,11 @@ import io.github.vantoozz.dikt.test.Service
 import io.github.vantoozz.dikt.test.ServiceDecorator
 import io.github.vantoozz.dikt.test.ServiceWithDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
-import kotlin.test.*
+import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 internal class BuilderTest {
 
