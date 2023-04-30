@@ -1,10 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
     `java-library`
     `maven-publish`
-    signing
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    id("com.github.ben-manes.versions") version "0.46.0"
     id("io.gitlab.arturbosch.detekt") version "1.22.0"
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    kotlin("jvm") version "1.8.21"
+    signing
 }
 
 java {
@@ -95,15 +96,14 @@ kotlin {
 
 kover {
     verify {
-        rule {
-            name = "Minimal line coverage rate in percents"
-            bound {
-                minValue = 100
+        kotlinx.kover.api.CounterType.values().forEach {
+            rule {
+                name = "Minimal ${it.name} coverage rate in percents"
+                bound {
+                    counter = it
+                    minValue = 100
+                }
             }
         }
     }
-}
-
-detekt {
-
 }
