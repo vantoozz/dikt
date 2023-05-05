@@ -59,7 +59,6 @@ internal class AutoClosableTest {
         assertEquals(1, history.size)
     }
 
-
     @Test
     fun `it is closes automatically`() {
         val history = mutableListOf<String>()
