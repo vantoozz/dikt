@@ -18,7 +18,7 @@ jobs:
           distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
-          arguments: build --scan
+          arguments: build koverXmlReport --scan
       - uses: actions/upload-artifact@v3
         with:
           name: reports
