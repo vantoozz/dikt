@@ -1,44 +1,45 @@
 package io.github.vantoozz.dikt
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.isSubclassOf
-
-fun <E : RuntimeException> diktThrowing(
-    exceptionClass: KClass<E>,
-    builder: MutableContainer.() -> Unit,
-) = dikt({ stack ->
-    "Cannot resolve ${stack.joinToString(" -> ")}"
-        .let { message ->
-            exceptionClass.constructors
-                .filterNot { ctor ->
-                    ctor.visibility == KVisibility.PRIVATE
-                }
-                .filter { ctor -> ctor.parameters.size == 1 }
-                .firstOrNull { ctor ->
-                    ctor.parameters[0].type.classifier
-                        .let { it as KClass<*> }
-                        .isSubclassOf(String::class)
-                }?.let { ctor ->
-                    throw ctor.call(message)
-                }
-                ?: run {
-                    throw DiktRuntimeException(
-                        "Cannot create an exception of the requested type"
-                    )
-                }
-        }
-}, builder)
-
 fun dikt(
-    onResolutionFailed: ((List<KClass<*>>) -> Unit)?,
+    options: Collection<Options> = emptySet(),
     builder: MutableContainer.() -> Unit,
-): Container =
-    KotlinReflectionContainer(onResolutionFailed).apply {
+): Container {
+    val autoCloseables = mutableSetOf<AutoCloseable>()
+
+    val container = KotlinReflectionContainer { resolution ->
+        if (resolution is Success && options.contains(Options.AUTO_CLOSEABLE) && resolution.instance is AutoCloseable) {
+            autoCloseables.add(resolution.instance)
+        }
+
+        if (resolution is Failure && !options.contains(Options.WITHOUT_EXCEPTION_ON_FAILURE)) {
+            throw DiktRuntimeException("Cannot resolve ${resolution.stack.joinToString(" -> ")}")
+        }
+    }.apply {
         builder()
     }
 
-fun dikt(builder: MutableContainer.() -> Unit) =
-    diktThrowing(RuntimeException::class, builder)
+    if (options.contains(Options.AUTO_CLOSEABLE)) {
+        return AutoClosableContainer(
+            container,
+            autoCloseables
+        )
+    }
+
+    return container
+}
+
+fun diktAutoCloseable(
+    options: Collection<Options> = emptySet(),
+    builder: MutableContainer.() -> Unit,
+) =
+    dikt(
+        options + Options.AUTO_CLOSEABLE,
+        builder
+    ) as AutoClosableContainer
 
 class DiktRuntimeException(message: String) : RuntimeException(message)
+
+enum class Options {
+    AUTO_CLOSEABLE,
+    WITHOUT_EXCEPTION_ON_FAILURE,
+}

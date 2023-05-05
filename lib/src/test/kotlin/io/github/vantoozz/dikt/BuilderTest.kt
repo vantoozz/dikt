@@ -5,6 +5,7 @@ import io.github.vantoozz.dikt.test.ServiceDecorator
 import io.github.vantoozz.dikt.test.ServiceWithDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
@@ -60,11 +61,13 @@ internal class BuilderTest {
     }
 
     @Test
-    fun `it accepts nulled resolution failed strategy`() {
-        val container = dikt(null) {}
+    fun `it does not throw exception if failed`() {
+        val container = dikt(setOf(Options.WITHOUT_EXCEPTION_ON_FAILURE)) {}
 
-        val service = container[ServiceWithDependency::class]
+        assertDoesNotThrow {
+            container[ServiceWithDependency::class]
+        }
 
-        assertNull(service)
+        assertNull(container[ServiceWithDependency::class])
     }
 }

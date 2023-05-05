@@ -2,6 +2,8 @@ package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.AutoClosableService
 import io.github.vantoozz.dikt.test.ServiceWithNoDependencies
+import io.github.vantoozz.dikt.test.SomeOtherTypeDependingOnAutoClosable
+import io.github.vantoozz.dikt.test.SomeTypeDependingOnAutoClosable
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -16,7 +18,7 @@ internal class AutoClosableTest {
                 put {
                     ServiceWithNoDependencies()
                 }
-            })
+            }, setOf())
 
         assertNotNull(container[ServiceWithNoDependencies::class])
     }
@@ -26,17 +28,86 @@ internal class AutoClosableTest {
         val history = mutableListOf<String>()
 
         val container =
-            AutoClosableContainer(dikt {
+            diktAutoCloseable {
                 put {
                     AutoClosableService(history)
                 }
-            })
+            }
 
         container[AutoClosableService::class]
 
         container.close()
 
         assertEquals(1, history.size)
+    }
+
+    @Test
+    fun `it closes dependency`() {
+        val history = mutableListOf<String>()
+
+        val container =
+            diktAutoCloseable {
+                put {
+                    AutoClosableService(history)
+                }
+            }
+
+        container[SomeTypeDependingOnAutoClosable::class]
+
+        container.close()
+
+        assertEquals(1, history.size)
+    }
+
+
+    @Test
+    fun `it is closes automatically`() {
+        val history = mutableListOf<String>()
+
+        diktAutoCloseable {
+            put {
+                AutoClosableService(history)
+            }
+        }.use {
+            it[SomeTypeDependingOnAutoClosable::class]
+        }
+
+        assertEquals(1, history.size)
+    }
+
+    @Test
+    fun `it closes dependency once`() {
+        val history = mutableListOf<String>()
+
+        val container =
+            diktAutoCloseable {
+                put {
+                    AutoClosableService(history)
+                }
+            }
+
+        container[SomeTypeDependingOnAutoClosable::class]
+        container[SomeOtherTypeDependingOnAutoClosable::class]
+
+        container.close()
+
+        assertEquals(1, history.size)
+    }
+
+    @Test
+    fun `it does not close a dependency by default`() {
+        val history = mutableListOf<String>()
+
+        val container =
+            dikt {
+                put {
+                    AutoClosableService(history)
+                }
+            }
+
+        container[SomeTypeDependingOnAutoClosable::class]
+
+        assertEquals(0, history.size)
     }
 
     @Test
@@ -48,7 +119,7 @@ internal class AutoClosableTest {
                 put {
                     AutoClosableService(history)
                 }
-            })
+            }, setOf())
 
         container.close()
 
@@ -58,7 +129,7 @@ internal class AutoClosableTest {
     @Test
     fun `it does not allow to close container twice`() {
 
-        val container = AutoClosableContainer(dikt {})
+        val container = AutoClosableContainer(dikt {}, setOf())
 
         container.close()
 
@@ -79,7 +150,7 @@ internal class AutoClosableTest {
                 put {
                     AutoClosableService(history)
                 }
-            })
+            }, setOf())
 
         container.close()
 

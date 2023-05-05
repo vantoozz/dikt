@@ -5,7 +5,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 
 class KotlinReflectionContainer(
-    private val onResolutionFailed: ((List<KClass<*>>) -> Unit)? = null,
+    private val onResolved: ((Resolution) -> Unit)? = null,
 ) : MutableContainer {
 
     private val instances: MutableMap<KClass<*>, Any> = mutableMapOf()
@@ -20,7 +20,9 @@ class KotlinReflectionContainer(
         mutableListOf<KClass<*>>().let { stack ->
             getTraced(klass, stack).also {
                 if (it == null) {
-                    onResolutionFailed?.invoke(stack)
+                    onResolved?.invoke(
+                        Failure(stack)
+                    )
                 }
             }
         }
@@ -33,6 +35,9 @@ class KotlinReflectionContainer(
                     ?: provided(klass)
                     ?: create(klass, stack)
             }?.also {
+                onResolved?.invoke(
+                    Success(it)
+                )
                 stack.removeLast()
             }
 

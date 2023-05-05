@@ -1,12 +1,7 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.Service
-import io.github.vantoozz.dikt.test.ServiceDecorator
 import io.github.vantoozz.dikt.test.ServiceWithDependency
-import io.github.vantoozz.dikt.test.SomeException
-import io.github.vantoozz.dikt.test.SomeExceptionWithMultipleParams
-import io.github.vantoozz.dikt.test.SomeExceptionWithPrivateCtor
-import io.github.vantoozz.dikt.test.SomeOtherException
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithTwoDependencies
 import kotlin.test.Test
@@ -20,9 +15,11 @@ internal class ErrorStackTest {
 
         var message = ""
 
-        val container = dikt({
-            message = "Cannot resolve " + it.joinToString(" -> ")
-        }) {}
+        val container = KotlinReflectionContainer {
+            if (it is Failure) {
+                message = "Cannot resolve " + it.stack.joinToString(" -> ")
+            }
+        }
 
         container[ServiceWithDependency::class]
 
@@ -38,40 +35,14 @@ internal class ErrorStackTest {
     @Test
     fun `it throws runtime exception`() {
 
-        val container = diktThrowing(SomeOtherException::class) {
-        }
+        val container = dikt {}
 
         val exception = assertFailsWith<DiktRuntimeException> {
             container[Service::class]
         }
 
         assertEquals(
-            "Cannot create an exception of the requested type",
-            exception.message
-        )
-    }
-
-    @Test
-    fun `it throws requested exception`() {
-
-        val container = diktThrowing(SomeException::class) {
-            bind<Service> {
-                ServiceDecorator(
-                    it[ServiceWithDependency::class]!!,
-                    "Some string"
-                )
-            }
-        }
-
-        val exception = assertFailsWith<SomeException> {
-            container[Service::class]
-        }
-
-        assertEquals(
-            "Cannot resolve " +
-                    "class io.github.vantoozz.dikt.test.ServiceWithDependency -> " +
-                    "class io.github.vantoozz.dikt.test.SomeTypeWithStringDependency -> " +
-                    "class kotlin.String",
+            "Cannot resolve class io.github.vantoozz.dikt.test.Service",
             exception.message
         )
     }
@@ -79,11 +50,11 @@ internal class ErrorStackTest {
     @Test
     fun `it clears error stack`() {
 
-        val container = diktThrowing(SomeException::class) {
+        val container = dikt {
             put { SomeTypeWithStringDependency("some string") }
         }
 
-        val exception = assertFailsWith<SomeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container[SomeTypeWithTwoDependencies::class]
         }
 
@@ -93,36 +64,6 @@ internal class ErrorStackTest {
                     "class io.github.vantoozz.dikt.test.AnotherTypeWithTwoDependencies -> " +
                     "class io.github.vantoozz.dikt.test.SomeTypeWithThreeStringsDependencies -> " +
                     "class kotlin.String",
-            exception.message
-        )
-    }
-
-    @Test
-    fun `it throws runtime exception if private ctor`() {
-        val container = diktThrowing(SomeExceptionWithPrivateCtor::class) {
-        }
-
-        val exception = assertFailsWith<DiktRuntimeException> {
-            container[Service::class]
-        }
-
-        assertEquals(
-            "Cannot create an exception of the requested type",
-            exception.message
-        )
-    }
-
-    @Test
-    fun `it throws runtime exception if multiple parameters ctor`() {
-        val container = diktThrowing(SomeExceptionWithMultipleParams::class) {
-        }
-
-        val exception = assertFailsWith<DiktRuntimeException> {
-            container[Service::class]
-        }
-
-        assertEquals(
-            "Cannot create an exception of the requested type",
             exception.message
         )
     }
