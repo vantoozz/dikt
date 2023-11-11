@@ -3,7 +3,7 @@ plugins {
 }
 
 rootProject.name = "dikt"
-include("lib")
+include("dikt")
 
 gradleEnterprise {
     buildScan {

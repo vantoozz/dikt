@@ -38,7 +38,6 @@ publishing {
         create<MavenPublication>("dikt") {
             from(components["java"])
             groupId = "io.github.vantoozz"
-            artifactId = "dikt"
 
             versionMapping {
                 usage("java-runtime") {
