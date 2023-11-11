@@ -5,6 +5,7 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createInstance
 
 class KotlinReflectionContainer(
+    private val allowOverrides: Boolean = true,
     private val onResolved: ((Resolution) -> Unit)? = null,
 ) : MutableContainer {
 
@@ -12,6 +13,12 @@ class KotlinReflectionContainer(
     private val providers: MutableMap<KClass<*>, (Container) -> Any?> = mutableMapOf()
 
     override fun <T : Any> set(klass: KClass<T>, provider: (Container) -> T?) {
+        if (!allowOverrides &&
+            (providers.containsKey(klass) || instances.containsKey(klass))
+        ) {
+            throw DiktRuntimeException("Overrides not allowed: $klass")
+        }
+
         providers[klass] = provider
         instances.remove(klass)
     }

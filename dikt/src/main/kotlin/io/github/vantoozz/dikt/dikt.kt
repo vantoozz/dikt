@@ -6,7 +6,9 @@ fun dikt(
 ): Container {
     val autoCloseables = mutableSetOf<AutoCloseable>()
 
-    val container = KotlinReflectionContainer { resolution ->
+    val container = KotlinReflectionContainer(
+        allowOverrides = options.contains(Options.ALLOW_OVERRIDES)
+    ) { resolution ->
         if (resolution is Success && options.contains(Options.AUTO_CLOSEABLE) && resolution.instance is AutoCloseable) {
             autoCloseables.add(resolution.instance)
         }
@@ -42,4 +44,5 @@ class DiktRuntimeException(message: String) : RuntimeException(message)
 enum class Options {
     AUTO_CLOSEABLE,
     WITHOUT_EXCEPTION_ON_FAILURE,
+    ALLOW_OVERRIDES,
 }
