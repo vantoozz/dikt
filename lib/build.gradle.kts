@@ -1,10 +1,15 @@
+import fr.brouillard.oss.jgitver.Strategies
+import kotlinx.kover.gradle.plugin.dsl.MetricType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.ben-manes.versions") version "0.46.0"
-    id("io.gitlab.arturbosch.detekt") version "1.22.0"
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
-    kotlin("jvm") version "1.8.21"
+    id("com.github.ben-manes.versions") version "0.49.0"
+    id("fr.brouillard.oss.gradle.jgitver") version "0.9.1"
+    id("io.gitlab.arturbosch.detekt") version "1.23.3"
+    id("org.jetbrains.kotlinx.kover") version "0.7.4"
+    kotlin("jvm") version "1.9.20"
     signing
 }
 
@@ -23,28 +28,23 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "Sonatype"
-            url = if (version.toString().endsWith("SNAPSHOT")) {
-                uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            } else {
-                uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            }
+jgitver {
+    strategy = Strategies.MAVEN
+    useDirty = true
+}
 
-            credentials {
-                username = project.properties["ossrhUsername"] as String
-                password = project.properties["ossrhPassword"] as String
-            }
-        }
-    }
+publishing {
     publications {
         create<MavenPublication>("dikt") {
             from(components["java"])
             groupId = "io.github.vantoozz"
             artifactId = "dikt"
-            version = "0.13.0"
+
+            versionMapping {
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
 
             pom {
                 name.set("Dikt")
@@ -71,6 +71,26 @@ publishing {
             }
         }
     }
+
+    repositories {
+        maven {
+            name = "Sonatype"
+            afterEvaluate {
+                url = if (project.version.toString().endsWith("-SNAPSHOT")
+                    || project.version.toString().endsWith("-dirty")
+                ) {
+                    uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                } else {
+                    uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                }
+
+                credentials {
+                    username = project.properties["ossrhUsername"] as String
+                    password = project.properties["ossrhPassword"] as String
+                }
+            }
+        }
+    }
 }
 
 signing {
@@ -82,25 +102,21 @@ tasks {
         useJUnitPlatform()
     }
 
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
 
 kotlin {
-    jvmToolchain {
-        languageVersion
-            .set(JavaLanguageVersion.of(8))
-    }
+    jvmToolchain(8)
 }
 
-kover {
+koverReport {
     verify {
-        kotlinx.kover.api.CounterType.values().forEach {
-            rule {
-                name = "Minimal ${it.name} coverage rate in percents"
+        MetricType.values().forEach {
+            rule("Minimal ${it.name} coverage rate in percents") {
                 bound {
-                    counter = it
+                    metric = it
                     minValue = 100
                 }
             }
