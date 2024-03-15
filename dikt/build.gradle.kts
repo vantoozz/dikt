@@ -5,11 +5,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.51.0"
     id("fr.brouillard.oss.gradle.jgitver") version "0.9.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.3"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.23"
     signing
 }
 
