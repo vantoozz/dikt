@@ -1,15 +1,16 @@
 import fr.brouillard.oss.jgitver.Strategies
-import kotlinx.kover.gradle.plugin.dsl.MetricType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import kotlinx.kover.gradle.plugin.dsl.CoverageUnit
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     `java-library`
     `maven-publish`
     id("com.github.ben-manes.versions") version "0.51.0"
     id("fr.brouillard.oss.gradle.jgitver") version "0.9.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
-    id("org.jetbrains.kotlinx.kover") version "0.7.4"
-    kotlin("jvm") version "1.9.23"
+    id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("org.jetbrains.kotlinx.kover") version "0.8.3"
+    kotlin("jvm") version "1.9.24"
     signing
 }
 
@@ -100,23 +101,26 @@ tasks {
     test {
         useJUnitPlatform()
     }
-
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
 }
 
 kotlin {
     jvmToolchain(8)
+
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_1_9)
+        jvmTarget.set(JvmTarget.JVM_1_8)
+    }
 }
 
-koverReport {
-    verify {
-        MetricType.values().forEach {
-            rule("Minimal ${it.name} coverage rate in percents") {
-                bound {
-                    metric = it
-                    minValue = 100
+kover {
+    reports {
+        verify {
+            CoverageUnit.values().forEach {
+                rule("Minimal ${it.name} coverage rate in percents") {
+                    bound {
+                        coverageUnits = it
+                        minValue = 100
+                    }
                 }
             }
         }
