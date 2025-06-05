@@ -72,25 +72,34 @@ class KotlinReflectionContainer(
 
     private fun <T : Any> createViaNotEmptyCtor(
         klass: KClass<T>, stack: MutableList<KClass<*>>,
-    ): T? = klass
-        .constructors
-        .filter { ctor -> ctor.parameters.isNotEmpty() }
-        .firstOrNull { ctor ->
-            ctor.parameters.all { parameter ->
-                parameter.type.classifier.let { classifier ->
+    ): T? {
+        klass.constructors
+            .filter { ctor -> ctor.parameters.isNotEmpty() }
+            .forEach { ctor ->
+                val arguments = mutableMapOf<kotlin.reflect.KParameter, Any?>()
+                var failed = false
+                for (parameter in ctor.parameters) {
+                    val classifier = parameter.type.classifier
                     if (classifier is KClass<*>) {
-                        getTraced(classifier, stack) != null
-                    } else false
+                        val value = getTraced(classifier, stack)
+                        if (value == null) {
+                            failed = true
+                            break
+                        }
+                        arguments[parameter] = value
+                    } else {
+                        failed = true
+                        break
+                    }
+                }
+
+                if (!failed) {
+                    return ctor.callBy(arguments)
                 }
             }
-        }
-        ?.let { ctor ->
-            ctor.callBy(
-                ctor.parameters.associateWith {
-                    getTraced(it.type.classifier as KClass<*>, stack)
-                }
-            )
-        }
+
+        return null
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> provided(klass: KClass<T>) =
