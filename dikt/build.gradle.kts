@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
     id("fr.brouillard.oss.gradle.jgitver") version "0.9.1"
-    id("io.gitlab.arturbosch.detekt") version "1.23.7"
-    id("org.jetbrains.kotlinx.kover") version "0.8.3"
-    kotlin("jvm") version "1.9.24"
+    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("org.jetbrains.kotlinx.kover") version "0.9.7"
+    kotlin("jvm") version "2.3.10"
     signing
 }
 
@@ -27,6 +27,7 @@ dependencies {
     implementation(kotlin("reflect"))
 
     testImplementation(kotlin("test"))
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 jgitver {
@@ -71,26 +72,6 @@ publishing {
             }
         }
     }
-
-    repositories {
-        maven {
-            name = "Sonatype"
-            afterEvaluate {
-                url = if (project.version.toString().endsWith("-SNAPSHOT")
-                    || project.version.toString().endsWith("-dirty")
-                ) {
-                    uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                } else {
-                    uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                }
-
-                credentials {
-                    username = project.properties["ossrhUsername"] as String
-                    password = project.properties["ossrhPassword"] as String
-                }
-            }
-        }
-    }
 }
 
 signing {
@@ -107,7 +88,7 @@ kotlin {
     jvmToolchain(8)
 
     compilerOptions {
-        apiVersion.set(KotlinVersion.KOTLIN_1_9)
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
         jvmTarget.set(JvmTarget.JVM_1_8)
     }
 }
@@ -115,7 +96,7 @@ kotlin {
 kover {
     reports {
         verify {
-            CoverageUnit.values().forEach {
+            CoverageUnit.entries.forEach {
                 rule("Minimal ${it.name} coverage rate in percents") {
                     bound {
                         coverageUnits = it

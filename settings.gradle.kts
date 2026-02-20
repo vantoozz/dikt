@@ -1,13 +1,22 @@
 plugins {
-    id("com.gradle.enterprise") version ("3.11.2")
+    id("com.gradle.develocity") version "3.19.2"
+    id("com.gradleup.nmcp.settings") version "1.4.4"
 }
 
-rootProject.name = "dikt"
+rootProject.name = "dikt-root"
 include("dikt")
 
-gradleEnterprise {
+develocity {
     buildScan {
-        termsOfServiceUrl = "https://gradle.com/terms-of-service"
-        termsOfServiceAgree = "yes"
+        termsOfUseUrl = "https://gradle.com/terms-of-service"
+        termsOfUseAgree = "yes"
+    }
+}
+
+nmcpSettings {
+    centralPortal {
+        username = providers.gradleProperty("mavenCentralUsername")
+        password = providers.gradleProperty("mavenCentralPassword")
+        publishingType = "USER_MANAGED"
     }
 }
