@@ -36,7 +36,7 @@ class KotlinReflectionContainer(
                     ?: create(klass, stack)
             }?.also {
                 onResolved?.invoke(
-                    Success(it)
+                    Success(it, stack.toList())
                 )
                 stack.removeLast()
             }

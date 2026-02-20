@@ -1,6 +1,8 @@
 package io.github.vantoozz.dikt
 
 import io.github.vantoozz.dikt.test.AutoClosableService
+import io.github.vantoozz.dikt.test.AutoClosableServiceThree
+import io.github.vantoozz.dikt.test.AutoClosableServiceTwo
 import io.github.vantoozz.dikt.test.ServiceWithNoDependencies
 import io.github.vantoozz.dikt.test.SomeOtherTypeDependingOnAutoClosable
 import io.github.vantoozz.dikt.test.SomeTypeDependingOnAutoClosable
@@ -18,7 +20,7 @@ internal class AutoClosableTest {
                 put {
                     ServiceWithNoDependencies()
                 }
-            }, setOf())
+            }, mapOf())
 
         assertNotNull(container[ServiceWithNoDependencies::class])
     }
@@ -118,7 +120,7 @@ internal class AutoClosableTest {
                 put {
                     AutoClosableService(history)
                 }
-            }, setOf())
+            }, mapOf())
 
         container.close()
 
@@ -128,7 +130,7 @@ internal class AutoClosableTest {
     @Test
     fun `it does not allow to close container twice`() {
 
-        val container = AutoClosableContainer(dikt {}, setOf())
+        val container = AutoClosableContainer(dikt {}, mapOf())
 
         container.close()
 
@@ -149,7 +151,7 @@ internal class AutoClosableTest {
                 put {
                     AutoClosableService(history)
                 }
-            }, setOf())
+            }, mapOf())
 
         container.close()
 
@@ -158,5 +160,46 @@ internal class AutoClosableTest {
         }
 
         assertEquals("Container is closed", exception.message)
+    }
+
+    @Test
+    fun `it closes dependents before dependencies`() {
+        val history = mutableListOf<String>()
+
+        val container =
+            diktAutoCloseable {
+                put {
+                    AutoClosableService(history)
+                }
+            }
+
+        val serviceTwo = container[AutoClosableServiceTwo::class]!!
+        serviceTwo.onClose = { history.add("two-closed") }
+
+        container.close()
+
+        assertEquals(listOf("two-closed", "closed"), history)
+    }
+
+    @Test
+    fun `it closes transitive dependents before dependencies`() {
+        val history = mutableListOf<String>()
+
+        val container =
+            diktAutoCloseable {
+                put {
+                    AutoClosableService(history)
+                }
+            }
+
+        val serviceTwo = container[AutoClosableServiceTwo::class]!!
+        serviceTwo.onClose = { history.add("two-closed") }
+
+        val serviceThree = container[AutoClosableServiceThree::class]!!
+        serviceThree.onClose = { history.add("three-closed") }
+
+        container.close()
+
+        assertEquals(listOf("three-closed", "two-closed", "closed"), history)
     }
 }
