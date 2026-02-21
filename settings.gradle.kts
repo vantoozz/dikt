@@ -16,10 +16,14 @@ develocity {
 fun credentialProperty(name: String): String {
     providers.gradleProperty(name).orNull?.takeIf { it.isNotBlank() }?.let { return it }
     System.getenv("ORG_GRADLE_PROJECT_$name")?.takeIf { it.isNotBlank() }?.let { return it }
-    val userHome = System.getProperty("user.home")
-    val props = java.util.Properties()
-    file("$userHome/.gradle/gradle.properties").takeIf { it.exists() }?.inputStream()?.use { props.load(it) }
-    return props.getProperty(name) ?: ""
+
+    val globalProperties = java.util.Properties()
+    file("${System.getProperty("user.home")}/.gradle/gradle.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { globalProperties.load(it) }
+
+    return globalProperties.getProperty(name) ?: ""
 }
 
 nmcpSettings {
