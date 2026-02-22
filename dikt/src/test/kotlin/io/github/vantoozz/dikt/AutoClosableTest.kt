@@ -6,9 +6,9 @@ import io.github.vantoozz.dikt.test.AutoClosableServiceTwo
 import io.github.vantoozz.dikt.test.ServiceWithNoDependencies
 import io.github.vantoozz.dikt.test.SomeOtherTypeDependingOnAutoClosable
 import io.github.vantoozz.dikt.test.SomeTypeDependingOnAutoClosable
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 internal class AutoClosableTest {
@@ -62,7 +62,7 @@ internal class AutoClosableTest {
     }
 
     @Test
-    fun `it is closes automatically`() {
+    fun `it closes automatically`() {
         val history = mutableListOf<String>()
 
         diktAutoCloseable {
@@ -134,7 +134,7 @@ internal class AutoClosableTest {
 
         container.close()
 
-        val exception = assertThrows<DiktRuntimeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container.close()
         }
 
@@ -155,7 +155,7 @@ internal class AutoClosableTest {
 
         container.close()
 
-        val exception = assertThrows<DiktRuntimeException> {
+        val exception = assertFailsWith<DiktRuntimeException> {
             container[AutoClosableService::class]
         }
 

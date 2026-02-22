@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with the Dikt repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -14,6 +14,12 @@ Dikt is a lightweight Dependency Injection library for Kotlin, published to Mave
 ./gradlew dikt:test                # Unit tests
 ./gradlew clean                    # Clean build artifacts
 
+# Run a single test class
+./gradlew dikt:test --tests 'io.github.vantoozz.dikt.ContainerTest'
+
+# Run a single test method
+./gradlew dikt:test --tests 'io.github.vantoozz.dikt.ContainerTest.it creates object of type'
+
 # Code quality
 ./gradlew detekt                   # Kotlin static analysis
 ./gradlew dikt:koverVerify         # Coverage verification (100% minimum)
@@ -22,38 +28,47 @@ Dikt is a lightweight Dependency Injection library for Kotlin, published to Mave
 ./gradlew dependencyUpdates        # Check for dependency updates
 ```
 
-## Project Structure
+## Architecture
 
-```
-dikt/
-├── dikt/                          # Library module
-│   ├── src/main/kotlin/io/github/vantoozz/dikt/
-│   │   ├── Container.kt           # Container and MutableContainer interfaces
-│   │   ├── KotlinReflectionContainer.kt  # Core reflection-based container
-│   │   ├── AutoClosableContainer.kt      # AutoCloseable-aware container wrapper
-│   │   ├── Resolution.kt          # Resolution result types (Success/Failure)
-│   │   ├── Factory.kt             # Factory type alias
-│   │   ├── dikt.kt                # DSL entry points (dikt {}, diktAutoCloseable {})
-│   │   ├── get.kt                 # Reified get extension
-│   │   ├── set.kt                 # Set operator extensions
-│   │   ├── put.kt                 # Put extensions
-│   │   ├── bind.kt                # Bind extensions
-│   │   ├── using.kt               # Using extensions
-│   │   └── register.kt            # Register extensions
-│   └── src/test/kotlin/io/github/vantoozz/dikt/
-│       ├── test/                   # Test fixtures (Service, SomeType*, etc.)
-│       ├── ContainerTest.kt       # Core container tests
-│       ├── AutoClosableTest.kt    # AutoCloseable lifecycle tests
-│       ├── BuilderTest.kt         # DSL builder tests
-│       ├── FactoryTest.kt         # Factory tests
-│       ├── ErrorStackTest.kt      # Error reporting tests
-│       └── MutableContainer*.kt   # Mutable container operation tests
-└── settings.gradle.kts
-```
+### Core Interfaces
+
+`Container` — read-only interface with `operator get(KClass<T>): T?` for resolving dependencies. `MutableContainer` extends it with `operator set(KClass<T>, (Container) -> T?)` for registering providers.
+
+### Resolution Chain
+
+`KotlinReflectionContainer` implements `MutableContainer`. When `get()` is called, it resolves in order:
+1. **Unit** — returns `Unit` directly
+2. **Cached instance** — previously resolved and cached
+3. **Registered provider** — invokes the lambda, caches the result, removes the provider
+4. **Auto-creation via reflection** — tries constructor with all-optional params first, then constructors whose parameters can all be recursively resolved
+
+Basic types (`Number`, `Boolean`, `String`) are excluded from auto-creation. Abstract classes are skipped. Resolution is recursive and tracked via a `stack: MutableList<KClass<*>>` for error reporting.
+
+The `onResolved` callback receives `Success` or `Failure` (sealed interface `Resolution`), enabling the `dikt()` entry point to build dependency graphs and throw on failures.
+
+### AutoCloseable Support
+
+`AutoClosableContainer` wraps a `Container` and holds a dependency graph of `AutoCloseable` instances. On `close()`, it topologically sorts the graph and closes dependents before their dependencies. Created via `diktAutoCloseable {}` or `dikt(options = setOf(Options.AUTO_CLOSEABLE)) {}`.
+
+### DSL Extension Functions
+
+All DSL functions are extension functions on `MutableContainer` that ultimately delegate to `set(KClass<T>, (Container) -> T?)`:
+
+- **`put`** — register a provider lambda or a concrete instance (reified, so no `::class` needed)
+- **`bind`** — like `put` but also accepts a `KClass<out T>` to bind an interface to an implementation class
+- **`register`** — register via a `Factory<T>` instance or factory class (resolved from container)
+- **`using`** — resolve a dependency first, then use it in a builder block or provider
+- **`set`** — operator overloads for setting concrete instances or class-to-class bindings
+- **`get`** — reified extension for `Container.get<T>()` without `::class`
+
+### Options
+
+`Options.AUTO_CLOSEABLE` — tracks `AutoCloseable` instances and wraps the container in `AutoClosableContainer`.
+`Options.WITHOUT_EXCEPTION_ON_FAILURE` — suppresses `DiktRuntimeException` on resolution failure (returns `null` instead).
 
 ## Technology Stack
 
-**Core:** Kotlin 1.9.24 (JVM 8), Gradle, kotlin-reflect
+**Core:** Kotlin 2.3 (API version 2.1, JVM target 1.8), Gradle, kotlin-reflect
 
 **Testing/Quality:** JUnit 5, kotlin.test, Detekt, Kover (100% coverage)
 
@@ -87,9 +102,10 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertSame
 import kotlin.test.assertIs
 import kotlin.test.assertContains
+import kotlin.test.assertFailsWith
 ```
 
-Exception: `assertThrows` may be imported from `org.junit.jupiter.api` when needed, as `kotlin.test` does not provide it (use `assertFailsWith` from `kotlin.test` instead when possible).
+Prefer `assertFailsWith` from `kotlin.test` over `assertThrows` from `org.junit.jupiter.api`.
 
 ### AAA Pattern
 
@@ -124,7 +140,7 @@ fun `it creates object of type with dependency`() {
 @Test fun `it does not allow to close container twice`() {}
 ```
 
-**Vocabulary:** creates, returns, builds, throws, closes, binds, does not
+**Vocabulary:** creates, returns, builds, throws, closes, binds, validates, rejects, converts, parses, configures, saves, does not
 
 ### Assertions
 
@@ -156,13 +172,21 @@ assertDoesNotThrow { SomeClass() }
 - `assertIs`: For polymorphic type verification
 - `assertThrows`/`assertFailsWith`: For expected exceptions
 
-### Test Best Practices
+### Parameterized Tests
 
-1. Test one behavior per test
-2. Tests are independent, no execution order dependency
-3. Use descriptive variable names
-4. Test edge cases and error conditions
-5. Use test fixtures from `test/` package for shared types
+Use `@ParameterizedTest` when multiple inputs share the same assertion logic instead of copy-pasting tests with minor variations.
+
+```kotlin
+@ParameterizedTest
+@EnumSource(SomeEnum::class)
+fun `it handles all enum values`(value: SomeEnum) {
+    val result = process(value)
+
+    assertNotNull(result)
+}
+```
+
+Available sources: `@EnumSource`, `@ValueSource`, `@MethodSource`, `@CsvSource`
 
 ### Quick Test Checklist
 
@@ -177,11 +201,13 @@ assertDoesNotThrow { SomeClass() }
 
 ## Code Standards
 
-1. Follow Kotlin coding conventions and idioms
-2. Prefer immutable data classes and sealed interfaces
-3. Define clear interfaces for testability
-4. **NEVER use the not-null assertion operator `!!`** in production code. Use safe alternatives (`?.`, `?:`, `let`, `require()`, `checkNotNull()`)
-5. **NO unnecessary comments** - Code must be self-documenting. Comments only for KDoc on public APIs or complex business logic (WHY, not WHAT)
+1. **NEVER use the not-null assertion operator `!!`** in production code. Use safe alternatives (`?.`, `?:`, `let`, `require()`, `checkNotNull()`)
+2. **NO unnecessary comments** — code must be self-documenting. Comments only for KDoc on public APIs or complex business logic (WHY, not WHAT)
+3. Prefer immutable data classes and sealed interfaces for data modeling
+4. Prefer single-expression functions where they improve readability
+5. Use read-only collections (`listOf`, `mapOf`, `setOf`) by default; use mutable variants only when mutation is required and scope them as narrowly as possible
+6. Use `use {}` for `AutoCloseable` resource management
+7. Mark incomplete code with `TODO("reason")` rather than empty stubs or placeholder comments
 
 ## Quality Requirements
 

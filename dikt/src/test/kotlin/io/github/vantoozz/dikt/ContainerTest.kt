@@ -15,7 +15,7 @@ import io.github.vantoozz.dikt.test.SomeTypeWithNoDependencies
 import io.github.vantoozz.dikt.test.SomeTypeWithNumberDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithOptionalDependency
 import io.github.vantoozz.dikt.test.SomeTypeWithStringDependency
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertSame

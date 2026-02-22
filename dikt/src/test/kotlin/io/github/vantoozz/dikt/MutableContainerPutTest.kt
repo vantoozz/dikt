@@ -8,7 +8,6 @@ import kotlin.test.assertTrue
 internal class MutableContainerPutTest {
 
     @Test
-
     fun `it binds provider with infix notation`() {
         val container = KotlinReflectionContainer()
 
