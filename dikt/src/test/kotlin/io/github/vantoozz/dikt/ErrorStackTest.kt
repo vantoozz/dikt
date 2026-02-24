@@ -67,4 +67,25 @@ internal class ErrorStackTest {
             exception.message
         )
     }
+
+    @Test
+    fun `it retains full resolution path on failure`() {
+        val stacks = mutableListOf<List<String>>()
+
+        val container = KotlinReflectionContainer {
+            when (it) {
+                is Success -> stacks.add(it.stack.map { k -> k.simpleName ?: "unknown" })
+                is Failure -> stacks.add(it.stack.map { k -> k.simpleName ?: "unknown" })
+            }
+        }
+
+        container[ServiceWithDependency::class]
+
+        assertEquals(
+            listOf(
+                listOf("ServiceWithDependency", "SomeTypeWithStringDependency", "String"),
+            ),
+            stacks,
+        )
+    }
 }

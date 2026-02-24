@@ -27,19 +27,24 @@ class KotlinReflectionContainer(
             }
         }
 
-    private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>) =
+    private fun <T : Any> getTraced(klass: KClass<T>, stack: MutableList<KClass<*>>): T? {
         stack.add(klass)
-            .run {
-                unit(klass)
-                    ?: instantiated(klass)
-                    ?: provided(klass)
-                    ?: create(klass, stack)
-            }?.also {
-                onResolved?.invoke(
-                    Success(it, stack.toList())
-                )
-                stack.removeLast()
-            }
+
+        val instance = unit(klass)
+            ?: instantiated(klass)
+            ?: provided(klass, stack)
+            ?: create(klass, stack)
+
+        if (instance != null) {
+            saveInstance(klass, instance)
+            onResolved?.invoke(
+                Success(instance, stack.toList())
+            )
+            stack.removeLast()
+        }
+
+        return instance
+    }
 
     private fun <T : Any> create(klass: KClass<T>, stack: MutableList<KClass<*>>): T? =
         klass
@@ -72,34 +77,33 @@ class KotlinReflectionContainer(
 
     private fun <T : Any> createViaNotEmptyCtor(
         klass: KClass<T>, stack: MutableList<KClass<*>>,
-    ): T? = klass
-        .constructors
-        .filter { ctor -> ctor.parameters.isNotEmpty() }
-        .firstOrNull { ctor ->
-            ctor.parameters.all { parameter ->
-                parameter.type.classifier.let { classifier ->
-                    if (classifier is KClass<*>) {
-                        getTraced(classifier, stack) != null
-                    } else false
+    ): T? {
+        val ctor = klass
+            .constructors
+            .filter { it.parameters.isNotEmpty() }
+            .firstOrNull { ctor ->
+                ctor.parameters.all { parameter ->
+                    parameter.type.classifier.let { classifier ->
+                        if (classifier is KClass<*>) {
+                            getTraced(classifier, stack) != null
+                        } else false
+                    }
                 }
+            } ?: return null
+
+        return ctor.callBy(
+            ctor.parameters.associateWith {
+                instantiated(it.type.classifier as KClass<*>)
             }
-        }
-        ?.let { ctor ->
-            ctor.callBy(
-                ctor.parameters.associateWith {
-                    getTraced(it.type.classifier as KClass<*>, stack)
-                }
-            )
-        }
+        )
+    }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> provided(klass: KClass<T>) =
+    private fun <T : Any> provided(klass: KClass<T>, stack: MutableList<KClass<*>>): T? =
         providers[klass]?.let { provider ->
-            provider(this)?.let { instance ->
-                instance as T
-                saveInstance(klass, instance)
-                instance
-            }
+            provider(object : Container {
+                override fun <R : Any> get(klass: KClass<R>): R? = getTraced(klass, stack)
+            }) as T?
         }
 
     @Suppress("UNCHECKED_CAST")

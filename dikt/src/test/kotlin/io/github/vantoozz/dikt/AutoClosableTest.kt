@@ -202,4 +202,5 @@ internal class AutoClosableTest {
 
         assertEquals(listOf("three-closed", "two-closed", "closed"), history)
     }
+
 }
